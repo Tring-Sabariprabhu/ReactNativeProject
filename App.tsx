@@ -34,7 +34,7 @@ function App(): React.JSX.Element {
         backgroundColor={backgroundStyle.backgroundColor}
       />
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Signin" screenOptions={{headerShown: false}}>
+        <Stack.Navigator initialRouteName="Signin" screenOptions={{headerShown: false, animation: 'flip'}} >
           <Stack.Screen name="Signin" component={SigninForm} />
           <Stack.Screen name="Signup" component={SignupForm} />
         </Stack.Navigator>

@@ -11,7 +11,7 @@ export const styles = StyleSheet?.create({
     },
     textInput: {
         backgroundColor: colors?.color_gray,
-        borderRadius: 10,
+        borderRadius: 15,
     },
     text: {
         fontSize: 18,
@@ -19,6 +19,6 @@ export const styles = StyleSheet?.create({
     button:{
         cursor: 'pointer',
         textAlign: 'center',
-        borderRadius: 8,
+        borderRadius: 15,
     },
 });

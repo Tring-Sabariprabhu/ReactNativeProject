@@ -1,9 +1,10 @@
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors, styles } from '../../assets/styles/global';
 import logo from '../../assets/images/galaxy_logo.png';
 import { ButtonField } from '../custom/ButtonField';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { TextInputField } from '../custom/TextInputField';
 
 type RootStackParamList = {
     Signin: undefined;
@@ -20,12 +21,8 @@ export const SigninForm = () => {
             <View style={SigninFormStyles?.container}>
                 <Text style={SigninFormStyles?.heading}>Sign in</Text>
                 <View style={SigninFormStyles?.inputContainer}>
-                    <View>
-                        <TextInput placeholder="Email" style={SigninFormStyles?.textInput} />
-                    </View>
-                    <View>
-                        <TextInput placeholder="Password" style={SigninFormStyles?.textInput} />
-                    </View>
+                   <TextInputField placeholder={'Email'} style={SigninFormStyles?.textInput}/>
+                   <TextInputField placeholder={'Password'} style={SigninFormStyles?.textInput}/>
                 </View>
                 <ButtonField title={'Sign in'} style={SigninFormStyles?.button}/>
                 <View style={SigninFormStyles?.footer}>
@@ -50,8 +47,6 @@ export const SigninFormStyles = StyleSheet.create({
         backgroundColor: colors?.color_white,
         padding: 10,
         paddingHorizontal: 25,
-        flexDirection: 'column',
-        gap: 10,
     },
     container: {
         flex: 2,
@@ -67,6 +62,7 @@ export const SigninFormStyles = StyleSheet.create({
         height: 150,
     },
     heading: {
+        letterSpacing: 1,
         color: colors?.color_blue,
         textAlign: 'center',
         fontSize: 35,
