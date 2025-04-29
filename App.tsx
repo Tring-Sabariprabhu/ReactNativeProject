@@ -5,41 +5,55 @@
  * @format
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   StatusBar,
-  useColorScheme,
 } from 'react-native';
 
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import { SignupForm } from './src/components/authentication/SignupForm';
-import { SigninForm } from './src/components/authentication/SigninForm';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { isDarkMode } from './src/assets/enums/theme';
+import { AuthLayout } from './src/layouts/AuthLayout';
+import { AlertNotificationRoot } from 'react-native-alert-notification';
+import { RootState } from 'src/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { DashBaordLayout } from 'src/layouts/DashBoardLayout';
+
+import { setUser } from 'src/redux/userSlice';
+import { getCurrentUser } from 'src/mockDatabase/mockAPIs/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
+  const dispatch = useDispatch();
+    useEffect(() => {
+        getCurrentUser().then((user) => {
+            dispatch(setUser({
+                user_id: user?.user_id,
+                user_name: user?.user_name,
+                email: user?.email,
+                age: user?.age,
+            }));
+        });
+    }, [dispatch]);
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  const Stack = createNativeStackNavigator();
+  const user = useSelector((state: RootState)=> state.user);
+  // AsyncStorage.clear();
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Signin" screenOptions={{headerShown: false, animation: 'flip'}} >
-          <Stack.Screen name="Signin" component={SigninForm} />
-          <Stack.Screen name="Signup" component={SignupForm} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+    <AlertNotificationRoot>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar
+          barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+          backgroundColor={backgroundStyle.backgroundColor}
+        />
+        {
+          user?.email ? <DashBaordLayout/> : <AuthLayout/>
+        }
+      </SafeAreaView>
+    </AlertNotificationRoot>
   );
 }
 

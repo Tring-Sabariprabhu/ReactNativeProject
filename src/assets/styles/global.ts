@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { fonts } from '../fonts';
 export enum colors {
     color_dark_blue = '#1B56FD',
     color_blue = '#0ec1f8',
@@ -10,14 +11,16 @@ export const styles = StyleSheet?.create({
         flex: 1,
     },
     textInput: {
-        backgroundColor: colors?.color_gray,
+        borderColor: colors?.color_gray,
+        borderWidth: 2,
         borderRadius: 15,
     },
-    text: {
+    paragraph: {
+        fontFamily: fonts?.Light,
         fontSize: 18,
     },
     button:{
-        cursor: 'pointer',
+        fontFamily: fonts?.Medium,
         textAlign: 'center',
         borderRadius: 15,
     },
