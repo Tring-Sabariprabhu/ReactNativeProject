@@ -32,18 +32,19 @@ function App(): React.JSX.Element {
             dispatch(setUser({
                 user_id: user?.user_id,
                 user_name: user?.user_name,
+                user_role: user?.user_role,
                 email: user?.email,
                 age: user?.age,
             }));
         });
     }, [dispatch]);
+
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
   const user = useSelector((state: RootState)=> state.user);
   // AsyncStorage.clear();
   return (
-    <AlertNotificationRoot>
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
@@ -53,7 +54,6 @@ function App(): React.JSX.Element {
           user?.email ? <DashBaordLayout/> : <AuthLayout/>
         }
       </SafeAreaView>
-    </AlertNotificationRoot>
   );
 }
 

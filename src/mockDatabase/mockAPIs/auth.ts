@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { users } from '../mockData/users';
+import { UserRole } from '../enums/User';
 
 interface signinProps {
     email: string,
@@ -31,6 +32,7 @@ export const signup = ({ email, name, password, age }: signupProps) => {
     users.push({
         user_id: (users?.length + 1).toString(),
         user_name: name,
+        user_role: UserRole?.PATIENT,
         email,
         password: password,
         age: age,

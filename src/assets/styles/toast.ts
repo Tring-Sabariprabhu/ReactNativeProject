@@ -10,3 +10,6 @@ export const toastStyle = {
         fontFamily: fonts?.Light,
     },
 };
+export const toastLengthShort = {
+    autoClose: 1000,
+};
