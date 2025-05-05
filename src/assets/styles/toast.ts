@@ -1,15 +1,15 @@
-import { fonts } from '../fonts';
+import { fonts } from '../Fonts';
 
 export const toastStyle = {
     titleStyle: {
         fontSize: 22,
-        fontFamily: fonts?.Medium,
+        fontFamily: fonts?.MEDIUM,
     },
     textBodyStyle: {
         fontSize: 16,
-        fontFamily: fonts?.Light,
+        fontFamily: fonts?.LIGHT,
     },
 };
 export const toastLengthShort = {
-    autoClose: 1000,
+    autoClose: 1500,
 };

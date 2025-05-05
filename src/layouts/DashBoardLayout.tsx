@@ -1,12 +1,15 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar, Text } from 'react-native';
-import { privateScreens } from 'src/assets/enums/screens';
-import { fonts } from 'src/assets/fonts';
-import { colors } from 'src/assets/styles/global';
-import { privateRoutes } from 'src/routes/PrivateRoutes';
+import { useSelector } from 'react-redux';
+import { privateScreens } from 'src/Assets/Enums/screens';
+import { fonts } from 'src/Assets/Fonts';
+import { colors } from 'src/Assets/Styles/global';
+import { RootState } from 'src/Redux/store';
+import { privateRoutes } from 'src/Routes/privateRoutes';
+
 
 export const DashBaordLayout = () => {
+    const user = useSelector((state: RootState)=> state?.user);
     const Drawer = createDrawerNavigator();
     return (
         <NavigationContainer>
@@ -15,24 +18,26 @@ export const DashBaordLayout = () => {
                 screenOptions={
                     {
                         headerTitleStyle: {
-                            fontFamily: fonts?.Medium,
+                            fontFamily: fonts?.MEDIUM,
                         },
                         drawerLabelStyle: {
-                            fontFamily: fonts?.Medium,
+                            fontFamily: fonts?.MEDIUM,
                             fontSize: 20,
                         },
-                        headerShadowVisible: true,
+                        headerShadowVisible: false,
                         headerStyle: {
-                            borderRadius: 20,
+                          borderBottomWidth: 1,
                         },
                         drawerItemStyle: {
                             borderRadius: 10,
                         },
-                        drawerActiveBackgroundColor: colors?.color_gray,
+                        drawerActiveBackgroundColor: colors?.GRAY,
                     }}>
-                {privateRoutes?.map((screen, index)=> (
-                        <Drawer.Screen name={screen?.name} component={screen?.component} options={screen?.options} key={index}/>
-                    ))}
+                {privateRoutes?.map((screen, index)=> {
+                    if(user?.user_role && screen?.roles?.includes(user?.user_role)){
+                        return <Drawer.Screen name={screen?.name} component={screen?.component} key={index} options={screen?.options}/>;
+                    }
+                })}
             </Drawer.Navigator>
         </NavigationContainer>
     );

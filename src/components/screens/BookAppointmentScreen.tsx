@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native';
-import { styles } from 'src/assets/styles/global';
+import { styles } from 'src/Assets/Styles/global';
 
 export const BookAppointmentScreen = ()=>{
     return(

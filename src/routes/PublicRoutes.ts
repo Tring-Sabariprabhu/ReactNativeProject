@@ -1,7 +1,7 @@
 
-import { publicScreens } from 'src/assets/enums/screens';
-import { SigninScreen } from 'src/components/authentication/SigninScreen';
-import { SignupScreen } from 'src/components/authentication/SignupScreen';
+import { publicScreens } from 'src/Assets/Enums/screens';
+import { SigninScreen } from 'src/Components/Authentication/SigninScreen';
+import { SignupScreen } from 'src/Components/Authentication/SignupScreen';
 export const publicRoutes = [
     {
         name: publicScreens?.Signin,

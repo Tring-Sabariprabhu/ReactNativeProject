@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { publicRoutes } from 'src/routes/PublicRoutes';
-import { publicScreens } from 'src/assets/enums/screens';
+import { publicScreens } from 'src/Assets/Enums/screens';
+import { publicRoutes } from 'src/Routes/publicRoutes';
 
 export const AuthLayout = () => {
   const Stack = createNativeStackNavigator();

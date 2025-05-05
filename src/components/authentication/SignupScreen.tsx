@@ -1,24 +1,28 @@
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { styles } from '../../assets/styles/global';
-import logo from '../../assets/images/galaxy_logo.png';
+import { styles } from '../../Assets/Styles/global';
+import logo from '../../Assets/Images/galaxy_logo.png';
 import { useNavigation } from '@react-navigation/native';
-import { CustomTextInput } from '../custom/CustomTextInput';
-import { CustomButton, CustomButtonTypes } from '../custom/CustomButton/CustomButton';
+import { CustomTextInput } from '../Custom/CustomTextInput';
+import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
 import { useForm } from 'react-hook-form';
-import { signup } from 'src/mockDatabase/mockAPIs/auth';
+import { signup } from 'src/MockDatabase/MockAPIs/auth';
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
-import { toastLengthShort, toastStyle } from 'src/assets/styles/toast';
-import { publicScreens } from 'src/assets/enums/screens';
+import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
+import { publicScreens } from 'src/Assets/Enums/screens';
 import { NavigationProp, SigninFormStyles } from './SigninScreen';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { inputPatterns } from 'src/validation/inputPatterns';
-import { inputTypes } from 'src/assets/enums/inputTypes';
+import { inputPatterns } from 'src/Validation/inputPatterns';
+import { inputTypes } from 'src/Assets/Enums/inputTypes';
+import { Picker } from '@react-native-picker/picker';
+import { ErrorMessage } from '../Custom/ErrorMessage';
+import { UserGender } from 'src/MockDatabase/Enums/users';
 
 interface FormValues {
     email: string,
     name: string,
     age: number,
+    gender: UserGender,
     password: string,
     confirm_password: string,
 }
@@ -38,6 +42,9 @@ const schema = yup
             .required('Age is required')
             .min(11, 'Age should be above 10')
             .max(90, 'Age is too large'),
+        gender: yup.string()
+            .required('Gender is required')
+            .oneOf([UserGender?.MALE, UserGender?.FEMALE], 'Gender should be Male or Female'),
         password: yup.string()
             .trim()
             .required('Password is required')
@@ -51,11 +58,12 @@ export const SignupScreen = () => {
 
     const navigation = useNavigation<NavigationProp>();
 
-    const { control, handleSubmit, formState: { errors } } = useForm({
+    const { control, handleSubmit, formState: { errors }, getValues, setValue } = useForm({
         defaultValues: {
             email: '',
             name: '',
             age: 0,
+            gender: UserGender?.MALE,
             password: '',
             confirm_password: '',
         },
@@ -65,10 +73,11 @@ export const SignupScreen = () => {
         try {
             const message = signup(
                 {
-                    email: formdata?.email?.toLowerCase(),
-                    name: formdata?.name,
-                    age: formdata?.age,
-                    password: formdata?.password,
+                    user_name: formdata?.name?.trim(),
+                    user_age: formdata?.age,
+                    user_gender: formdata?.gender,
+                    email: formdata?.email?.trim()?.toLowerCase(),
+                    password: formdata?.password?.trim(),
                 });
             Toast.show({
                 ...toastStyle,
@@ -122,6 +131,19 @@ export const SignupScreen = () => {
                         name={'age'}
                         errMessage={errors?.age?.message}
                     />
+                    <View>
+                        <Picker
+                            style={SigninFormStyles?.dropDown}
+                            selectedValue={getValues('gender')}
+                            mode={'dropdown'}
+                            onValueChange={(value) => {
+                                setValue('gender', value);
+                            }}>
+                            <Picker.Item label={'Male'} value={UserGender?.MALE} style={SigninFormStyles?.dropDownItem} />
+                            <Picker.Item label={'Female'} value={UserGender?.FEMALE} style={SigninFormStyles?.dropDownItem} />
+                        </Picker>
+                        {errors?.gender?.message && <ErrorMessage message={errors?.gender?.message}/>}
+                    </View>
                     <CustomTextInput
                         placeholder={'Password'}
                         style={SigninFormStyles?.textInput}
@@ -144,7 +166,7 @@ export const SignupScreen = () => {
                         buttonStyle={SigninFormStyles?.button}
                         textStyle={SigninFormStyles?.buttonTextStyle}
                         onPress={handleSubmit(onSubmit)}
-                        />
+                    />
                     <View style={SigninFormStyles?.footer}>
                         <Text style={styles?.paragraph}>
                             Already have an Account?

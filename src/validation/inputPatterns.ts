@@ -1,4 +1,4 @@
-import { inputTypes } from 'src/assets/enums/inputTypes';
+import { inputTypes } from 'src/Assets/Enums/inputTypes';
 
 interface InputPatternProps{
     type: inputTypes,

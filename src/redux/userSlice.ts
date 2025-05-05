@@ -1,21 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { UserRole } from 'src/mockDatabase/enums/User';
+import { UserGender, UserRole } from 'src/MockDatabase/Enums/users';
 export interface userState{
-    token: string | null,
     user_id: string | null,
     user_name: string | null,
-    user_role: UserRole
+    user_role: UserRole | null,
+    user_age: string | null,
+    user_gender: UserGender | null,
     email: string | null,
-    age: string | null,
 }
 
 const initialState: userState = {
-    token: null,
     user_id: null,
     user_name: null,
-    user_role: UserRole?.PATIENT,
+    user_role: null,
+    user_age: null,
+    user_gender: null,
     email: null,
-    age: null,
 };
 
 const userSlice = createSlice({
@@ -23,11 +23,11 @@ const userSlice = createSlice({
     initialState: initialState,
     reducers: {
         setUser: (state, action)=> {
-            state.token = action?.payload?.token;
             state.user_id = action?.payload?.user_id;
             state.user_name = action?.payload?.user_name;
             state.user_role = action?.payload?.user_role;
-            state.age = action?.payload?.age;
+            state.user_age = action?.payload?.user_age;
+            state.user_gender = action.payload.user_gender;
             state.email = action?.payload?.email;
         },
     },

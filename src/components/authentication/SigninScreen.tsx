@@ -1,22 +1,22 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { colors, styles } from '../../assets/styles/global';
-import logo from '../../assets/images/galaxy_logo.png';
-import {  CustomButton, CustomButtonTypes } from '../custom/CustomButton/CustomButton';
+import { colors, styles } from '../../Assets/Styles/global';
+import logo from '../../Assets/Images/galaxy_logo.png';
+import {  CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CustomTextInput } from '../custom/CustomTextInput';
-import { fonts } from '../../assets/fonts';
+import { CustomTextInput } from '../Custom/CustomTextInput';
+import { fonts } from '../../Assets/Fonts';
 import { useForm } from 'react-hook-form';
-import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
-import { toastLengthShort, toastStyle } from 'src/assets/styles/toast';
+import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
+import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { setUser } from 'src/redux/userSlice';
+import { setUser } from 'src/Redux/userSlice';
 import { useDispatch } from 'react-redux';
-import { signin, getCurrentUser } from 'src/mockDatabase/mockAPIs/auth';
+import { signin, getCurrentUser } from 'src/MockDatabase/MockAPIs/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { inputPatterns } from 'src/validation/inputPatterns';
-import { inputTypes } from 'src/assets/enums/inputTypes';
+import { inputPatterns } from 'src/Validation/inputPatterns';
+import { inputTypes } from 'src/Assets/Enums/inputTypes';
 
 type RootStackParamList = {
     Signin: undefined;
@@ -56,30 +56,31 @@ export const SigninScreen = () => {
             const data = signin({ email: formdata?.email?.toLowerCase(), password: formdata?.password });
             await AsyncStorage.setItem('token', data?.user_id);
             const user = await getCurrentUser();
-            Toast.show({
-                ...toastStyle,
-                ...toastLengthShort,
-                type: ALERT_TYPE.SUCCESS,
-                title: 'Success',
-                textBody: 'Logged In Successfully',
-            });
             setTimeout(() => {
                 dispatch(setUser({
                     user_id: user?.user_id,
                     user_name: user?.user_name,
                     user_role: user?.user_role,
+                    user_gender: user?.user_gender,
+                    user_age: user?.user_age,
                     email: user?.email,
-                    age: user?.age,
                 }));
-            }, 500);
+                Dialog.show({
+                    type: ALERT_TYPE.SUCCESS,
+                    title: 'Success',
+                    textBody: 'Logged In Successfully',
+                    button: 'Ok',
+                });
+            }, 1000);
         }
         catch (err) {
             if (err instanceof Error) {
-                Toast.show({
-                    ...toastStyle,
+                Dialog.show({
+                    // ...toastStyle,
                     type: ALERT_TYPE.DANGER,
                     title: 'Logging failed',
                     textBody: err?.message,
+                    button: 'Ok',
                 });
             }
         }
@@ -135,7 +136,7 @@ export const SigninScreen = () => {
 export const SigninFormStyles = StyleSheet.create({
     screen: {
         ...styles?.screen,
-        backgroundColor: colors?.color_white,
+        backgroundColor: colors?.WHITE,
         paddingHorizontal: 40,
         gap: 100,
     },
@@ -151,8 +152,8 @@ export const SigninFormStyles = StyleSheet.create({
         gap: 30,
     },
     heading: {
-        fontFamily: fonts?.Medium,
-        color: colors?.color_blue,
+        fontFamily: fonts?.MEDIUM,
+        color: colors?.BLUE,
         textAlign: 'center',
         fontSize: 35,
     },
@@ -165,15 +166,22 @@ export const SigninFormStyles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
     },
+    dropDown: {
+        backgroundColor: colors?.LIGHT_GRAY,
+    },
+    dropDownItem: {
+        ...styles?.paragraph,
+        padding: 10,
+    },
     button: {
         ...styles?.button,
         borderRadius: 100,
         paddingVertical: 6,
-        backgroundColor: colors?.color_blue,
+        backgroundColor: colors?.BLUE,
     },
     buttonTextStyle: {
-        color: colors?.color_white,
-        fontFamily: fonts?.Medium,
+        color: colors?.WHITE,
+        fontFamily: fonts?.MEDIUM,
         fontSize: 24,
         fontWeight: 500,
         textAlign: 'center',
@@ -185,8 +193,8 @@ export const SigninFormStyles = StyleSheet.create({
         gap: 10,
     },
     navigator: {
-        fontFamily: fonts?.Medium,
+        fontFamily: fonts?.MEDIUM,
         fontSize: 22,
-        color: colors?.color_blue,
+        color: colors?.BLUE,
     },
 });

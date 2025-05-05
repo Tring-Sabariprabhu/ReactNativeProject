@@ -4,6 +4,9 @@ export enum publicScreens {
 }
 export enum privateScreens {
     Home = 'Home',
+    Doctors = 'Doctors',
+    Patients = 'Patients',
     BookAppointment = 'BookAppointment',
-    ViewAppointments = 'ViewAppointments'
+    ViewAppointments = 'ViewAppointments',
+    AddDoctor = 'AddDoctor',
 }

@@ -1,35 +1,43 @@
 import { StatusBar, StyleSheet } from 'react-native';
-import { fonts } from '../fonts';
+import { fonts } from '../Fonts';
 export enum colors {
-    color_red = '#FF2929',
-    color_blue = '#0ec1f8',
-    color_dark_blue = '#1B56FD',
-    color_white = '#ffffff',
-    color_gray = '#EFEFEF',
-    color_dark_gray = '#DFD0B8',
+    RED = '#FF2929',
+    BLUE = '#0ec1f8',
+    DARK_BLUE = '#1B56FD',
+    WHITE = '#ffffff',
+    LIGHT_GRAY = '#F5F5F5',
+    GRAY = '#EFEFEF',
+    DARK_GRAY = '#DFD0B8',
 }
 export const styles = StyleSheet?.create({
     screen: {
         flex: 1,
-        paddingVertical: StatusBar?.currentHeight,
+        paddingTop: StatusBar?.currentHeight,
     },
     textInput: {
-        fontFamily: fonts?.Light,
-        borderColor: colors?.color_dark_gray,
+        fontFamily: fonts?.LIGHT,
+        borderColor: colors?.DARK_GRAY,
         borderWidth: 1,
         borderRadius: 5,
     },
     paragraph: {
-        fontFamily: fonts?.Light,
+        fontFamily: fonts?.LIGHT,
         fontSize: 18,
     },
+    highlightedParagraph: {
+        fontSize: 18,
+        fontFamily: fonts?.MEDIUM,
+    },
+    capitalizedContent: {
+        textTransform: 'capitalize',
+    },
     error: {
-        color: colors?.color_red,
+        color: colors?.RED,
         paddingStart: 10,
-        fontFamily: fonts?.Light,
+        fontFamily: fonts?.LIGHT,
         fontSize: 14,
     },
     button:{
-        fontFamily: fonts?.Medium,
+        fontFamily: fonts?.MEDIUM,
     },
 });

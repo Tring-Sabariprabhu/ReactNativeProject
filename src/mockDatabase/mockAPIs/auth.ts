@@ -1,43 +1,60 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { users } from '../mockData/users';
-import { UserRole } from '../enums/User';
+import { users } from '../MockData/users';
+import { UserGender, UserRole } from '../Enums/users';
 
 interface signinProps {
     email: string,
     password: string
 }
 interface signupProps {
+    user_name: string,
+    user_age: number
+    user_role?: UserRole
+    user_gender: UserGender
     email: string,
-    name: string,
     password: string,
-    age: number
 }
 export const signin = ({ email, password }: signinProps) => {
-    const userdata = users.find((data) => data?.email === email);
-    if (!userdata) {
-        throw new Error('User not found');
+    try {
+        const userdata = users.find((data) => data?.email === email);
+        if (!userdata) {
+            throw new Error('User not found');
+        }
+        if (userdata?.password !== password) {
+            throw new Error('Password Incorrect');
+        }
+        return {
+            user_id: userdata?.user_id,
+        };
     }
-    if (userdata?.password !== password) {
-        throw new Error('Password Incorrect');
+    catch (err) {
+        if (err instanceof Error) {
+            throw new Error(err?.message);
+        }
     }
-    return {
-        user_id: userdata?.user_id,
-    };
 };
-export const signup = ({ email, name, password, age }: signupProps) => {
-    const userExists = users?.find((data) => data?.email === email);
-    if (userExists) {
-        throw new Error('User already exists');
+export const signup = ({ email, user_name, password, user_age, user_role = UserRole?.PATIENT, user_gender}: signupProps) => {
+    try {
+        const userExists = users?.find((data) => data?.email === email);
+        if (userExists) {
+            throw new Error('User already exists');
+        }
+        users.push({
+            user_id: (users?.length + 1).toString(),
+            user_name,
+            user_role,
+            user_gender,
+            user_age,
+            email,
+            password,
+        });
+        return 'Registered Successfully';
     }
-    users.push({
-        user_id: (users?.length + 1).toString(),
-        user_name: name,
-        user_role: UserRole?.PATIENT,
-        email,
-        password: password,
-        age: age,
-    });
-    return 'Registered Successfully';
+    catch (err) {
+        if (err instanceof Error) {
+            throw new Error(err?.message);
+        }
+    }
 };
 
 export const getCurrentUser = async () => {
@@ -47,7 +64,7 @@ export const getCurrentUser = async () => {
         return user;
     }
     catch (err) {
-        if(err instanceof Error){
+        if (err instanceof Error) {
             throw new Error(err?.message);
         }
     }

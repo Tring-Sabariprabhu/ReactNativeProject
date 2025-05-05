@@ -1,5 +1,5 @@
 import { Text } from 'react-native';
-import { styles } from 'src/assets/styles/global';
+import { styles } from 'src/Assets/Styles/global';
 interface ErrorMessageProps{
     message: string
 }
