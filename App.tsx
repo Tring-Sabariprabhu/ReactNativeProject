@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StatusBar,
 } from 'react-native';
@@ -15,45 +15,48 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import { isDarkMode } from './src/Assets/Enums/theme';
 import { AuthLayout } from './src/Layouts/AuthLayout';
-import { RootState } from 'src/Redux/store';
-import { useDispatch, useSelector } from 'react-redux';
 import { DashBaordLayout } from 'src/Layouts/DashBoardLayout';
 
-import { setUser } from 'src/Redux/userSlice';
-import { getCurrentUser } from 'src/MockDatabase/MockAPIs/auth';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from 'src/Assets/Styles/global';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Loader } from 'src/Components/Custom/Loader';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/Redux/store';
 
 function App(): React.JSX.Element {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    getCurrentUser().then((user) => {
-      dispatch(setUser({
-        user_id: user?.user_id,
-        user_name: user?.user_name,
-        user_role: user?.user_role,
-        user_age: user?.user_age,
-        user_gender: user?.user_gender,
-        email: user?.email,
-      }));
-    });
-  }, [dispatch]);
+  const [token, setToken] = useState<string | null>();
+  const [loading, setLoading] = useState(true);
+  const user = useSelector((state: RootState)=> state?.user);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const fetchToken = () => {
+    setLoading(true);
+    AsyncStorage?.getItem('token').then((data) => {
+      setLoading(false);
+      if (data) {
+        setToken(data);
+      }else{
+        setToken(null);
+      }
+    });
   };
-  const user = useSelector((state: RootState) => state.user);
+  useEffect(() => {
+    fetchToken();
+  }, [user]);
+
   // AsyncStorage.clear();
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-          backgroundColor={backgroundStyle.backgroundColor}
+          backgroundColor={isDarkMode ? Colors.darker : Colors.lighter}
         />
         {
-          user?.email ? <DashBaordLayout /> : <AuthLayout />
+          loading ? <Loader /> :
+            (token ?
+              <DashBaordLayout  /> :
+              <AuthLayout />)
         }
       </SafeAreaView>
     </SafeAreaProvider>

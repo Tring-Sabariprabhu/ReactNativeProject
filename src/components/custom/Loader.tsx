@@ -1,5 +1,6 @@
 import { ActivityIndicator } from 'react-native';
-import { colors } from 'src/Assets/Styles/global';
+import { colors } from 'src/Assets/Enums/colors';
+
 
 export const Loader = () => (
     <ActivityIndicator

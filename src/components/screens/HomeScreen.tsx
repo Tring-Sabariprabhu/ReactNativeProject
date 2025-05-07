@@ -1,15 +1,15 @@
 
 import { useSelector } from 'react-redux';
-import { colors, styles } from '../../Assets/Styles/global';
+import {  styles } from '../../Assets/Styles/global';
 import { StyleSheet, Text, View } from 'react-native';
 import { RootState } from 'src/Redux/store';
+import { colors } from 'src/Assets/Enums/colors';
 
 export const HomeScreen = () => {
     const user = useSelector((state: RootState) => state?.user);
     return (
         <View style={style?.screen}>
             <View style={style?.box}>
-                <Text style={styles?.paragraph}>User ID: {user?.user_id}</Text>
                 <Text style={styles?.paragraph}>Name: {user?.user_name}</Text>
                 <Text style={styles?.paragraph}>Role: {user?.user_role}</Text>
                 <Text style={styles?.paragraph}>Age: {user?.user_age}</Text>

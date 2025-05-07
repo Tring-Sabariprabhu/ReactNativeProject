@@ -1,12 +1,14 @@
-import { UserGender, UserRole } from '../Enums/users';
+import { Days, UserGender, UserRole } from '../Enums/users';
+import { doctors, DoctorSpecialists } from '../MockData/doctors';
 import { users } from '../MockData/users';
-import { signup } from './auth';
 
 interface addUserProps{
     email: string
-    user_name: string
-    user_age: number
-    user_gender: UserGender
+    doctor_name: string
+    doctor_age: number
+    doctor_gender: UserGender
+    speciality: DoctorSpecialists,
+    work_days: Days[],
 }
 export const getAllPatients = ()=>{
     try{
@@ -21,8 +23,17 @@ export const getAllPatients = ()=>{
 };
 export const getAllDoctors = ()=>{
     try{
-        const doctors = users?.filter((user)=> user?.user_role === UserRole?.DOCTOR);
-        return doctors;
+        let allDoctors = users?.filter((user)=> user?.user_role === UserRole?.DOCTOR);
+        allDoctors = allDoctors?.map((user)=> {
+            const doctorDetails = doctors?.find((doctor)=> doctor?.user_id === user?.user_id);
+            return (
+                {
+                    ...user,
+                    ...doctorDetails,
+                }
+            );
+        });
+        return allDoctors;
     }
     catch(err){
         if(err instanceof Error){
@@ -30,17 +41,33 @@ export const getAllDoctors = ()=>{
         }
     }
 };
-export const addDoctor = ({email, user_age, user_name, user_gender}: addUserProps)=>{
+export const addDoctor = ( props : addUserProps)=>{
     try{
-        signup(
-            {
-                email,
-                user_role: UserRole?.DOCTOR,
-                user_name,
-                user_age,
-                user_gender,
-                password: 'Test123@',
-            });
+        const { email,
+                doctor_age,
+                doctor_name,
+                doctor_gender,
+                work_days,
+                speciality} = props;
+        const userExists = users?.find((data) => data?.email === email);
+        if (userExists) {
+            throw new Error('User already exists');
+        }
+        const user_id = (users?.length + 1).toString();
+        users.push({
+            user_id,
+            user_name: doctor_name,
+            user_role: UserRole?.DOCTOR,
+            user_gender: doctor_gender,
+            user_age: doctor_age,
+            email,
+            password: 'Test123@',
+        });
+        doctors?.push({
+            user_id,
+            speciality,
+            work_days,
+        });
         return 'Doctor added Successfully';
     }
     catch(err){

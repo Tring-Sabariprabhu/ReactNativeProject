@@ -1,9 +1,10 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { colors, styles } from 'src/Assets/Styles/global';
-import { CustomButton, CustomButtonTypes } from './CustomButton/CustomButton';
+import { styles } from 'src/Assets/Styles/global';
+import { CustomButton, CustomButtonTypes } from '../CustomButton/CustomButton';
 import { fonts } from 'src/Assets/Fonts';
 import { ReactNode } from 'react';
+import { colors } from 'src/Assets/Enums/colors';
 
 export enum CustomPopupTypes {
     SUCCESS = 'success',
@@ -12,10 +13,10 @@ export enum CustomPopupTypes {
     VIEW = 'view',
 }
 enum PopupColors {
-    'success' = 'green',
-    'info' = colors?.BLUE,
-    'error' = colors?.RED,
-    'view' = colors?.DARK_BLUE,
+    success = colors?.GREEN,
+    info = colors?.BLUE,
+    error = colors?.RED,
+    view = colors?.DARK_BLUE,
 }
 interface CustomPopupProps {
     type: CustomPopupTypes
@@ -33,7 +34,6 @@ export const CustomPopup = ({ type, title, textBody, isOpen, onClose, closeButto
     return (
         <Modal
             isVisible={isOpen}
-            animationIn={'fadeInUpBig'}
             style={style?.modal}>
             <View style={{ ...style?.container, borderColor: PopupColors[type] }}>
                 {title &&

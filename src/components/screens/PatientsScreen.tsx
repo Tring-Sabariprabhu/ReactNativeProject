@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
+import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
 import { fonts } from 'src/Assets/Fonts';
-import { colors, styles } from 'src/Assets/Styles/global';
+import { styles } from 'src/Assets/Styles/global';
 import { getAllPatients } from 'src/MockDatabase/MockAPIs/users';
-import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup';
-import { User } from 'src/MockDatabase/MockData/users';
+import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
+import { colors } from 'src/Assets/Enums/colors';
+import { User } from 'src/MockDatabase/Types/Types';
 export const PatientsScreen = () => {
     const patients = getAllPatients();
     const [patientDetailsPopup, setPatientDetailsPopup] = useState(false);
@@ -23,13 +24,6 @@ export const PatientsScreen = () => {
                             onSwipeLeft={() => {
                                 setSelectedPatient(patient);
                                 setPatientDetailsPopup(true);
-                            }}
-                            onSwipeRight={() => {
-                                Toast.show(
-                                    {
-                                        type: ALERT_TYPE?.SUCCESS,
-                                        textBody: 'Swipe right performed',
-                                    });
                             }}>
                             <View style={style?.person} key={patient?.user_id}>
                                 <View>
@@ -105,7 +99,7 @@ export const style = StyleSheet.create({
         paddingVertical: 20,
         paddingHorizontal: 30,
         borderWidth: 2,
-        borderColor: colors?.GRAY,
+        borderColor: colors?.LIGHT_GRAY,
         backgroundColor: colors?.WHITE,
     },
     swiped: {

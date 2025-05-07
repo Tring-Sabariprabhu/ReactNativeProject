@@ -1,14 +1,7 @@
 import { StatusBar, StyleSheet } from 'react-native';
 import { fonts } from '../Fonts';
-export enum colors {
-    RED = '#FF2929',
-    BLUE = '#0ec1f8',
-    DARK_BLUE = '#1B56FD',
-    WHITE = '#ffffff',
-    LIGHT_GRAY = '#F5F5F5',
-    GRAY = '#EFEFEF',
-    DARK_GRAY = '#DFD0B8',
-}
+import { colors } from '../Enums/colors';
+
 export const styles = StyleSheet?.create({
     screen: {
         flex: 1,
@@ -16,9 +9,9 @@ export const styles = StyleSheet?.create({
     },
     textInput: {
         fontFamily: fonts?.LIGHT,
-        borderColor: colors?.DARK_GRAY,
-        borderWidth: 1,
-        borderRadius: 5,
+        borderColor: colors?.LIGHT_GRAY,
+        borderWidth: 2,
+        borderRadius: 10,
     },
     paragraph: {
         fontFamily: fonts?.LIGHT,
@@ -29,6 +22,8 @@ export const styles = StyleSheet?.create({
         fontFamily: fonts?.MEDIUM,
     },
     capitalizedContent: {
+        fontFamily: fonts?.LIGHT,
+        fontSize: 18,
         textTransform: 'capitalize',
     },
     error: {
@@ -41,3 +36,4 @@ export const styles = StyleSheet?.create({
         fontFamily: fonts?.MEDIUM,
     },
 });
+

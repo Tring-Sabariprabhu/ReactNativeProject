@@ -1,5 +1,4 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { colors, styles } from '../../Assets/Styles/global';
 import logo from '../../Assets/Images/galaxy_logo.png';
 import {  CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
@@ -7,8 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CustomTextInput } from '../Custom/CustomTextInput';
 import { fonts } from '../../Assets/Fonts';
 import { useForm } from 'react-hook-form';
-import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
-import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
+import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUser } from 'src/Redux/userSlice';
 import { useDispatch } from 'react-redux';
@@ -17,10 +15,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { inputPatterns } from 'src/Validation/inputPatterns';
 import { inputTypes } from 'src/Assets/Enums/inputTypes';
+import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
+import { styles } from 'src/Assets/Styles/global';
+import { colors } from 'src/Assets/Enums/colors';
 
 type RootStackParamList = {
     Signin: undefined;
     Signup: undefined;
+    Home: undefined;
+    AddDoctor: {
+        user_id: string
+    } | undefined;
 };
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -54,7 +59,9 @@ export const SigninScreen = () => {
     const onSubmit = async (formdata: FormValues) => {
         try {
             const data = signin({ email: formdata?.email?.toLowerCase(), password: formdata?.password });
-            await AsyncStorage.setItem('token', data?.user_id);
+            if(data?.user_id){
+                await AsyncStorage.setItem('token', data?.user_id);
+            }
             const user = await getCurrentUser();
             setTimeout(() => {
                 dispatch(setUser({
@@ -64,23 +71,24 @@ export const SigninScreen = () => {
                     user_gender: user?.user_gender,
                     user_age: user?.user_age,
                     email: user?.email,
+                    refetchToken: true,
                 }));
-                Dialog.show({
+                Toast.show({
+                    ...toastStyle,
+                    ...toastLengthShort,
                     type: ALERT_TYPE.SUCCESS,
                     title: 'Success',
                     textBody: 'Logged In Successfully',
-                    button: 'Ok',
                 });
             }, 1000);
         }
         catch (err) {
             if (err instanceof Error) {
-                Dialog.show({
-                    // ...toastStyle,
+                Toast.show({
+                    ...toastStyle,
                     type: ALERT_TYPE.DANGER,
                     title: 'Logging failed',
                     textBody: err?.message,
-                    button: 'Ok',
                 });
             }
         }
@@ -149,6 +157,7 @@ export const SigninFormStyles = StyleSheet.create({
         height: 150,
     },
     container: {
+        paddingTop: 10,
         gap: 30,
     },
     heading: {
@@ -176,11 +185,12 @@ export const SigninFormStyles = StyleSheet.create({
     button: {
         ...styles?.button,
         borderRadius: 100,
+        borderWidth: 2,
         paddingVertical: 6,
-        backgroundColor: colors?.BLUE,
+        borderColor: colors?.BLUE,
     },
     buttonTextStyle: {
-        color: colors?.WHITE,
+        color: colors?.BLUE,
         fontFamily: fonts?.MEDIUM,
         fontSize: 24,
         fontWeight: 500,

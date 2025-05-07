@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { users } from '../MockData/users';
 import { UserGender, UserRole } from '../Enums/users';
+import { doctors } from '../MockData/doctors';
 
 interface signinProps {
     email: string,
@@ -61,6 +62,10 @@ export const getCurrentUser = async () => {
     try {
         const user_id = await AsyncStorage.getItem('token');
         const user = users?.find((data) => data?.user_id === user_id);
+        if(user?.user_role === UserRole?.DOCTOR){
+            const doctorDetails = doctors?.find((doctor)=> doctor?.user_id === user?.user_id);
+            return ({...user, doctorDetails});
+        }
         return user;
     }
     catch (err) {

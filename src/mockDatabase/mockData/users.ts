@@ -1,22 +1,15 @@
 import { UserGender, UserRole } from '../Enums/users';
+import { User } from '../Types/Types';
 
-export interface User{
-    user_id: string
-    user_name: string
-    user_role: UserRole
-    user_age: number
-    user_gender: UserGender
-    email: string
-    password: string
-}
+
 export const users: User[] = [
     {
         user_id: '1',
-        user_name: 'Varun',
+        user_name: 'Admin',
         user_role: UserRole?.ADMIN,
         user_age: 22,
         user_gender: UserGender?.MALE,
-        email: 'varun@mailinator.com',
+        email: 'admin@mailinator.com',
         password: 'Test123@',
     },
     {

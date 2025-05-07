@@ -8,6 +8,7 @@ import { PatientsScreen } from 'src/Components/Screens/PatientsScreen';
 import { ViewAppointmentsScreen } from 'src/Components/Screens/ViewAppointmentsScreen';
 import { UserRole } from 'src/MockDatabase/Enums/users';
 
+
 export const privateRoutes = [
     {
         name: privateScreens?.Home,
@@ -17,6 +18,7 @@ export const privateRoutes = [
             headerTitle: 'Dashboard',
             title: 'Dashboard',
         },
+        iconName: 'home',
     },
     {
         name: privateScreens?.BookAppointment,
@@ -26,6 +28,7 @@ export const privateRoutes = [
             headerTitle: 'Book Appointment',
             title: 'Book Appointment',
         },
+        iconName: 'add',
     },
     {
         name: privateScreens?.ViewAppointments,
@@ -35,16 +38,19 @@ export const privateRoutes = [
             headerTitle: 'View Appointments',
             title: 'View Appointments',
         },
+        iconName: 'mail',
     },
     {
         name: privateScreens?.Doctors,
         component: DoctorsScreen,
         roles: [UserRole?.ADMIN],
+        iconName: 'groups',
     },
     {
         name: privateScreens?.Patients,
         component: PatientsScreen,
         roles: [UserRole?.ADMIN],
+        iconName: 'groups',
     },
     {
         name: privateScreens?.AddDoctor,
@@ -54,5 +60,6 @@ export const privateRoutes = [
             headerTitle: 'Add Doctor',
             title: 'Add Doctor',
         },
+        iconName: 'person-add',
     },
 ];

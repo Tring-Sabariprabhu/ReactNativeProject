@@ -10,13 +10,13 @@ export const AuthLayout = () => {
       <Stack.Navigator
         initialRouteName={publicScreens?.Signin}
         screenOptions={
-        {
-          headerShown: false,
-          animation: 'flip',
+          {
+            headerShown: false,
+            animation: 'flip',
           }} >
         {
-          publicRoutes?.map((screen, index)=> (
-            <Stack.Screen name={screen?.name} component={screen?.component} key={index}/>
+          publicRoutes?.map((screen, index) => (
+            <Stack.Screen name={screen?.name} component={screen?.component} key={index} />
           ))
         }
       </Stack.Navigator>
