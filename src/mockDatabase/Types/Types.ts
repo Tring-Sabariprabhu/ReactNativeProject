@@ -1,5 +1,4 @@
-import { UserRole, UserGender, DoctorSpecialists, Days } from '../Enums/users';
-
+import { UserRole, UserGender, DoctorSpecialists } from '../Enums/users';
 
 export interface User extends Doctor {
     user_id: string
@@ -11,9 +10,20 @@ export interface User extends Doctor {
     password: string
 }
 
+
 export interface Doctor {
     speciality?: DoctorSpecialists,
-    work_days?: Days[]
-    user_id?: string
+    work_days?: Work_days
+    doctor_id?: string
 }
+export interface Work_days{
+    monday: boolean
+    tuesday: boolean
+    wednesday: boolean
+    thursday: boolean
+    friday: boolean
+    saturday: boolean
+    sunday: boolean
+}
+
 

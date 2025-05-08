@@ -63,7 +63,7 @@ export const getCurrentUser = async () => {
         const user_id = await AsyncStorage.getItem('token');
         const user = users?.find((data) => data?.user_id === user_id);
         if(user?.user_role === UserRole?.DOCTOR){
-            const doctorDetails = doctors?.find((doctor)=> doctor?.user_id === user?.user_id);
+            const doctorDetails = doctors?.find((doctor)=> doctor?.doctor_id === user?.user_id);
             return ({...user, doctorDetails});
         }
         return user;

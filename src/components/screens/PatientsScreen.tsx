@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
 import { fonts } from 'src/Assets/Fonts';
@@ -8,11 +7,12 @@ import { styles } from 'src/Assets/Styles/global';
 import { getAllPatients } from 'src/MockDatabase/MockAPIs/users';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
 import { colors } from 'src/Assets/Enums/colors';
-import { User } from 'src/MockDatabase/Types/Types';
+import { Patient, ViewUser } from '../Custom/ViewUser';
+
 export const PatientsScreen = () => {
     const patients = getAllPatients();
     const [patientDetailsPopup, setPatientDetailsPopup] = useState(false);
-    const [selectedPatient, setSelectedPatient] = useState<User>();
+    const [selectedPatient, setSelectedPatient] = useState<Patient>();
     return (
         <View style={style?.screen}>
             <FlatList
@@ -25,8 +25,8 @@ export const PatientsScreen = () => {
                                 setSelectedPatient(patient);
                                 setPatientDetailsPopup(true);
                             }}>
-                            <View style={style?.person} key={patient?.user_id}>
-                                <View>
+                            <View  key={patient?.user_id}>
+                                <View style={style?.person}>
                                     <Text style={styles?.paragraph}>Patient name </Text>
                                     <Text style={style?.person_name}>{patient?.user_name}</Text>
                                 </View>
@@ -37,37 +37,15 @@ export const PatientsScreen = () => {
             <CustomPopup
                 type={CustomPopupTypes?.INFO}
                 title={'Patient details'}
+                titleStyle={{fontSize: 25}}
                 isOpen={patientDetailsPopup}
                 onClose={() => setPatientDetailsPopup(false)}
                 closeButtonText={'Ok'}
-                childComponent={showPatientDetails(selectedPatient)}
+                childComponent={ViewUser(selectedPatient)}
                 />
         </View>
     );
 };
-
-const showPatientDetails = (patient: User | undefined)=> (
-    <View style={style?.showPatientContainer}>
-        <View style={style?.row}>
-            <Text style={styles?.paragraph}>Name : </Text>
-            <Text style={style?.capitalizedContent}>
-                {patient?.user_name}
-            </Text>
-        </View>
-        <View style={style?.row}>
-            <Text style={styles?.paragraph}>Age : </Text>
-            <Text style={styles?.paragraph}>
-                {patient?.user_age}
-            </Text>
-        </View>
-        <View style={style?.row}>
-            <Text style={styles?.paragraph}>Gender : </Text>
-            <Text style={style?.capitalizedContent}>
-                {patient?.user_gender}
-            </Text>
-        </View>
-    </View>
-);
 
 export const style = StyleSheet.create({
     screen: {
@@ -94,24 +72,11 @@ export const style = StyleSheet.create({
     },
     person: {
         ...styles?.paragraph,
-        flexDirection: 'row',
-        gap: 5,
         paddingVertical: 20,
         paddingHorizontal: 30,
         borderWidth: 2,
         borderColor: colors?.LIGHT_GRAY,
         backgroundColor: colors?.WHITE,
-    },
-    swiped: {
-        ...styles?.paragraph,
-        flexDirection: 'row',
-        gap: 5,
-        paddingVertical: 20,
-        paddingHorizontal: 30,
-        borderWidth: 2,
-        borderColor: colors?.GRAY,
-        backgroundColor: colors?.WHITE,
-        opacity: 0.1,
     },
     person_name: {
         textTransform: 'capitalize',

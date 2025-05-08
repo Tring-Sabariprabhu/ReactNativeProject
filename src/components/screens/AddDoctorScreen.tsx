@@ -1,9 +1,9 @@
-import {  Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import { CustomTextInput } from '../Custom/CustomTextInput';
 import { Controller, useForm } from 'react-hook-form';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
-import { SigninFormStyles } from '../Authentication/SigninScreen';
-import { addDoctor } from 'src/MockDatabase/MockAPIs/users';
+import { NavigationProp, SigninFormStyles } from '../Authentication/SigninScreen';
+import { addDoctor, getDoctor } from 'src/MockDatabase/MockAPIs/users';
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,14 +12,16 @@ import { inputPatterns } from 'src/Validation/inputPatterns';
 import { inputTypes } from 'src/Assets/Enums/inputTypes';
 import { Picker } from '@react-native-picker/picker';
 import { ErrorMessage } from '../Custom/ErrorMessage';
-import { Days, DaysList, DoctorSpecialists, UserGender } from 'src/MockDatabase/Enums/users';
-import { useState } from 'react';
+import { DaysList, DoctorSpecialists, UserGender } from 'src/MockDatabase/Enums/users';
+import { useEffect, useState } from 'react';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
 import { styles } from 'src/Assets/Styles/global';
 import { CustomCheckbox } from '../Custom/CustomCheckbox';
 import { colors } from 'src/Assets/Enums/colors';
-import { Doctor, DoctorView } from './DoctorView';
-
+import { Work_days } from 'src/MockDatabase/Types/Types';
+import { Doctor, ViewUser } from '../Custom/ViewUser';
+import { useNavigation } from '@react-navigation/native';
+import { privateScreens } from 'src/Assets/Enums/screens';
 
 interface FormValues {
     doctor_name: string
@@ -27,15 +29,7 @@ interface FormValues {
     doctor_gender: UserGender
     speciality: DoctorSpecialists
     email: string
-    work_days: {
-        monday: boolean,
-        tuesday: boolean,
-        wednesday: boolean,
-        thursday: boolean,
-        friday: boolean,
-        saturday: boolean,
-        sunday: boolean,
-    }
+    work_days: Work_days
 }
 const schema = yup
     .object()
@@ -70,48 +64,59 @@ const schema = yup
             .matches(inputPatterns({ type: inputTypes?.EMAIL }), 'Email should be valid'),
     });
 export const AddDoctorScreen = () => {
-    const { control, handleSubmit, formState: { errors }, setValue, getValues, reset } = useForm({
-        shouldUnregister: false,
-        defaultValues: {
-            doctor_name: '',
-            doctor_age: 0,
-            doctor_gender: UserGender?.MALE,
-            speciality: DoctorSpecialists?.CARDIOLOGY,
-            email: '',
-            work_days: {
-                monday: false,
-                tuesday: false,
-                wednesday: false,
-                thursday: false,
-                friday: false,
-                saturday: false,
-                sunday: false,
-            },
+    const navigation = useNavigation<NavigationProp>();
+    const [doctorDetails, setDoctorDetails] = useState<Doctor>();
+    const [confirmPopup, setConfirmPopup] = useState(false);
+
+    const defaultValues = {
+        doctor_name: '',
+        doctor_age: 0,
+        doctor_gender: UserGender?.MALE,
+        speciality: DoctorSpecialists?.CARDIOLOGY,
+        email: '',
+        work_days: {
+            monday: false,
+            tuesday: false,
+            wednesday: false,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
         },
+    };
+
+    const { control, handleSubmit, formState: { errors }, setValue, getValues, clearErrors } = useForm({
+        shouldUnregister: false,
+        defaultValues: defaultValues,
         resolver: yupResolver(schema),
     });
 
+    useEffect(() => {
+        navigation?.addListener('blur', () => clearErrors());
+    }, [navigation]);
 
-    const addDoctorProcess = () => {
-        if (doctorDetails) {
+    const addDoctorProcess = async () => {
+        const doctor = getValues();
+        if (doctor) {
             try {
                 const {
                     email,
-                    user_name,
-                    user_age,
-                    user_gender,
+                    doctor_name,
+                    doctor_age,
+                    doctor_gender,
                     speciality,
                     work_days,
-                } = doctorDetails;
-                    const result = addDoctor(
-                        {
-                            email: email?.toLowerCase(),
-                            doctor_name: user_name,
-                            doctor_age: user_age,
-                            doctor_gender: user_gender,
-                            speciality: speciality,
-                            work_days: work_days,
-                        });
+                } = doctor;
+                const result = addDoctor(
+                    {
+                        email,
+                        doctor_name,
+                        doctor_age,
+                        doctor_gender,
+                        speciality,
+                        work_days,
+                    });
+                if (result) {
                     Toast?.show({
                         ...toastStyle,
                         ...toastLengthShort,
@@ -119,7 +124,11 @@ export const AddDoctorScreen = () => {
                         textBody: result,
                         type: ALERT_TYPE?.SUCCESS,
                     });
-                    reset();
+                    for (const [key, value] of Object.entries(defaultValues)) {
+                        setValue(key as keyof FormValues, value);
+                    }
+                    navigation?.navigate(privateScreens?.Doctors);
+                }
             }
             catch (err) {
                 if (err instanceof Error) {
@@ -134,29 +143,22 @@ export const AddDoctorScreen = () => {
             setConfirmPopup(false);
         }
     };
-    const [doctorDetails, setDoctorDetails] = useState<Doctor>();
-    const [confirmPopup, setConfirmPopup] = useState(false);
 
     const onSubmit = (formdata: FormValues) => {
-        let work_days: Days[] = [];
-        DaysList.forEach(day => {
-            if (formdata?.work_days[day]) {
-                work_days.push(day);
-            }
-        });
         const {
             doctor_age,
             doctor_gender,
             doctor_name,
             email,
-            speciality } = formdata;
-        setDoctorDetails({
-            user_name: doctor_name,
-            user_age: doctor_age,
-            email: email,
-            user_gender: doctor_gender,
             speciality,
-            work_days,
+            work_days } = formdata;
+        setDoctorDetails({
+            user_name: doctor_name?.trim(),
+            user_age: doctor_age,
+            email: email?.trim()?.toLowerCase(),
+            user_gender: doctor_gender,
+            speciality: speciality,
+            work_days: work_days,
         });
         setConfirmPopup(true);
     };
@@ -193,7 +195,7 @@ export const AddDoctorScreen = () => {
                         <Picker
                             style={SigninFormStyles?.dropDown}
                             selectedValue={getValues('doctor_gender')}
-                            mode={'dropdown'}
+                            mode={'dialog'}
                             onValueChange={(value) => {
                                 setValue('doctor_gender', value);
                             }}>
@@ -210,7 +212,7 @@ export const AddDoctorScreen = () => {
                         <Picker
                             style={SigninFormStyles?.dropDown}
                             selectedValue={getValues('speciality')}
-                            mode={'dropdown'}
+                            mode={'dialog'}
                             onValueChange={(value) => {
                                 setValue('speciality', value);
                             }}>
@@ -230,14 +232,14 @@ export const AddDoctorScreen = () => {
                         DaysList?.map((day) => (
                             <Controller
                                 key={day}
-                                name={`work_days.${day}`}
+                                name={`work_days.${day as keyof Work_days}`}
                                 control={control}
                                 render={({ field }) => (
                                     <CustomCheckbox
                                         text={day}
                                         isChecked={field?.value}
                                         onChange={field?.onChange}
-                                        iconSize={20}
+                                        iconSize={26}
                                         iconColor={colors?.BLUE}
                                         textStyle={styles?.capitalizedContent} />
                                 )} />
@@ -254,12 +256,12 @@ export const AddDoctorScreen = () => {
                 <CustomPopup
                     type={CustomPopupTypes?.INFO}
                     isOpen={confirmPopup}
+                    title={'Do you want to add this Doctor details ? '}
                     onClose={() => setConfirmPopup(false)}
                     closeButtonText={'No'}
-                    title={'Do you want to add this Doctor details ? '}
                     successButtonText={'Yes'}
                     onSuccess={addDoctorProcess}
-                    childComponent={DoctorView(doctorDetails)}
+                    childComponent={ViewUser(doctorDetails)}
                 />
             </View>
         </ScrollView>

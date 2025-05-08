@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TextStyle, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { styles } from 'src/Assets/Styles/global';
+// import { styles } from 'src/Assets/Styles/global';
 import { CustomButton, CustomButtonTypes } from '../CustomButton/CustomButton';
 import { fonts } from 'src/Assets/Fonts';
 import { ReactNode } from 'react';
@@ -24,12 +24,13 @@ interface CustomPopupProps {
     closeButtonText: string
     onClose: () => void,
     title?: string
+    titleStyle?: TextStyle
     textBody?: string
     childComponent?: ReactNode
     successButtonText?: string
     onSuccess?: () => void
 }
-export const CustomPopup = ({ type, title, textBody, isOpen, onClose, closeButtonText, onSuccess, successButtonText, childComponent }: CustomPopupProps) => {
+export const CustomPopup = ({ type, title, titleStyle, textBody, isOpen, onClose, closeButtonText, onSuccess, successButtonText, childComponent }: CustomPopupProps) => {
 
     return (
         <Modal
@@ -38,13 +39,13 @@ export const CustomPopup = ({ type, title, textBody, isOpen, onClose, closeButto
             <View style={{ ...style?.container, borderColor: PopupColors[type] }}>
                 {title &&
                     <View>
-                        <Text style={style?.heading}>
+                        <Text style={{...style?.heading, ...titleStyle}}>
                             {title}
                         </Text>
                     </View>}
                 {
                     textBody &&
-                    <Text style={styles?.paragraph}>
+                    <Text style={style?.textBody}>
                         {textBody}
                     </Text>
                 }
@@ -88,20 +89,24 @@ const style = StyleSheet.create({
         backgroundColor: colors?.WHITE,
         gap: 10,
     },
-    button: {
-        borderRadius: 5,
-        backgroundColor: colors?.BLUE,
-        paddingHorizontal: 10,
-    },
-    buttonTextStyle: {
-        fontFamily: fonts?.MEDIUM,
-        color: colors?.WHITE,
-        fontSize: 18,
+    textBody: {
+        fontFamily: fonts?.LIGHT,
     },
     modalFooter: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
         gap: 20,
         paddingVertical: 10,
+        paddingHorizontal: 10,
+    },
+    button: {
+        borderRadius: 5,
+        backgroundColor: colors?.BLUE,
+        paddingHorizontal: 12,
+    },
+    buttonTextStyle: {
+        fontFamily: fonts?.MEDIUM,
+        color: colors?.WHITE,
+        fontSize: 18,
     },
 });

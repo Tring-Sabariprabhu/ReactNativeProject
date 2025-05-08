@@ -23,9 +23,9 @@ type RootStackParamList = {
     Signin: undefined;
     Signup: undefined;
     Home: undefined;
-    AddDoctor: {
-        user_id: string
-    } | undefined;
+    AddDoctor: undefined;
+    Doctors: undefined
+    Patients: undefined
 };
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -185,12 +185,11 @@ export const SigninFormStyles = StyleSheet.create({
     button: {
         ...styles?.button,
         borderRadius: 100,
-        borderWidth: 2,
         paddingVertical: 6,
-        borderColor: colors?.BLUE,
+        backgroundColor: colors?.BLUE,
     },
     buttonTextStyle: {
-        color: colors?.BLUE,
+        color: colors?.WHITE,
         fontFamily: fonts?.MEDIUM,
         fontSize: 24,
         fontWeight: 500,

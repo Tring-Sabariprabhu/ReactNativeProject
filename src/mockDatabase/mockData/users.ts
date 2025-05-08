@@ -41,15 +41,6 @@ export const users: User[] = [
     },
     {
         user_id: '5',
-        user_name: 'Chandru',
-        user_role: UserRole?.DOCTOR,
-        user_age: 22,
-        user_gender: UserGender?.MALE,
-        email: 'chandru@mailinator.com',
-        password: 'Test123@',
-    },
-    {
-        user_id: '6',
         user_name: 'Kavya',
         user_role: UserRole?.DOCTOR,
         user_age: 22,
@@ -57,4 +48,5 @@ export const users: User[] = [
         email: 'kavya@mailinator.com',
         password: 'Test123@',
     },
+
 ];

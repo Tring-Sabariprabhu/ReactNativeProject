@@ -63,7 +63,7 @@ export const DashBaordLayout = () => {
                             borderRadius: 10,
                         },
                         drawerActiveTintColor: colors?.DARK_BLUE,
-                        drawerType: 'slide',
+                        drawerType: 'front',
                     }}>
                 {privateRoutes?.map((screen, index) => {
                     if (screen?.name === privateScreens?.Home || (user?.user_role && screen?.roles?.includes(user?.user_role))) {

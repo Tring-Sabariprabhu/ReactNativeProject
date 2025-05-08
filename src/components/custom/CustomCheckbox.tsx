@@ -26,7 +26,6 @@ export const CustomCheckbox = ({ text, iconSize, iconColor, onChange, isChecked,
 const style = StyleSheet.create({
     item: {
         flexDirection: 'row',
-        alignItems: 'center',
         gap: 5,
     },
     textStyle: {

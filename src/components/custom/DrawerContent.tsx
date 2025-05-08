@@ -2,36 +2,49 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { colors } from 'src/Assets/Enums/colors';
 import { fonts } from 'src/Assets/Fonts';
 import { setUser } from 'src/Redux/userSlice';
 import { CustomPopup, CustomPopupTypes } from './CustomPopup/CustomPopup';
+import { RootState } from 'src/Redux/store';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '../Authentication/SigninScreen';
+
 
 
 
 export const DrawerContent = (props: DrawerContentComponentProps) => {
+    const user = useSelector((state : RootState)=> state?.user);
     const dispatch = useDispatch();
     const [confirmPopup, setConfirmPopup] = useState(false);
+    const navigation = useNavigation<NavigationProp>();
 
     const logout = async () => {
         await AsyncStorage.removeItem('token');
         dispatch(setUser({}));
         setConfirmPopup(false);
     };
+    const handleLogout = ()=>{
+        setConfirmPopup(true);
+        navigation.dispatch(DrawerActions.closeDrawer());
+    };
+
     return (
-        <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
+        <DrawerContentScrollView contentContainerStyle={style?.container}>
             <View style={style?.container}>
                 <View>
                     <View style={style?.header}>
-                        <Text style={style?.headerTitle}>Header</Text>
+                        <Text style={style?.headerTitle}>
+                            {user?.user_role}
+                        </Text>
                     </View>
                     <View>
                         <DrawerItemList {...props} />
                     </View>
                 </View>
                 <View style={style?.footer}>
-                    <TouchableOpacity onPress={()=> setConfirmPopup(true)}>
+                    <TouchableOpacity onPress={handleLogout}>
                         <Text style={style?.navigator} >
                             Logout
                         </Text>
@@ -39,11 +52,13 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                 </View>
             </View>
             <CustomPopup
-                type={CustomPopupTypes.VIEW}
+                type={CustomPopupTypes.INFO}
                 isOpen={confirmPopup}
-                title={'Your Account logging out now'}
-                closeButtonText={'Ok'}
-                onClose={logout}
+                title={'Do you want to logout ? '}
+                closeButtonText={'No'}
+                successButtonText={'Yes'}
+                onSuccess={logout}
+                onClose={()=>setConfirmPopup(false)}
                 />
         </DrawerContentScrollView>
     );
@@ -53,12 +68,12 @@ const style = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'space-between',
-        // backgroundColor: colors?.BLUE,
     },
     header: {
         padding: 10,
     },
     headerTitle: {
+        textTransform: 'capitalize',
         fontFamily: fonts?.MEDIUM,
         fontSize: 25,
     },
