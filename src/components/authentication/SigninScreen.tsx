@@ -176,7 +176,9 @@ export const SigninFormStyles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     dropDown: {
-        backgroundColor: colors?.LIGHT_GRAY,
+        backgroundColor: colors.LIGHT_GRAY,
+        borderColor: colors?.BLACK,
+        borderWidth: 1,
     },
     dropDownItem: {
         ...styles?.paragraph,
@@ -184,7 +186,7 @@ export const SigninFormStyles = StyleSheet.create({
     },
     button: {
         ...styles?.button,
-        borderRadius: 100,
+        borderRadius: 10,
         paddingVertical: 6,
         backgroundColor: colors?.BLUE,
     },

@@ -1,4 +1,4 @@
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView, StyleSheet } from 'react-native';
 import { CustomTextInput } from '../Custom/CustomTextInput';
 import { Controller, useForm } from 'react-hook-form';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
@@ -22,6 +22,7 @@ import { Work_days } from 'src/MockDatabase/Types/Types';
 import { Doctor, ViewUser } from '../Custom/ViewUser';
 import { useNavigation } from '@react-navigation/native';
 import { privateScreens } from 'src/Assets/Enums/screens';
+import { fonts } from 'src/Assets/Fonts';
 
 interface FormValues {
     doctor_name: string
@@ -109,8 +110,8 @@ export const AddDoctorScreen = () => {
                 } = doctor;
                 const result = addDoctor(
                     {
-                        email,
-                        doctor_name,
+                        email: email?.trim()?.toLowerCase(),
+                        doctor_name: doctor_name?.trim(),
                         doctor_age,
                         doctor_gender,
                         speciality,
@@ -165,8 +166,8 @@ export const AddDoctorScreen = () => {
 
     return (
         <ScrollView>
-            <View style={SigninFormStyles?.screen}>
-                <View style={SigninFormStyles?.container}>
+            <View style={style?.screen}>
+                <View style={style?.container}>
                     <CustomTextInput
                         name={'doctor_name'}
                         control={control}
@@ -195,7 +196,7 @@ export const AddDoctorScreen = () => {
                         <Picker
                             style={SigninFormStyles?.dropDown}
                             selectedValue={getValues('doctor_gender')}
-                            mode={'dialog'}
+                            mode={'dropdown'}
                             onValueChange={(value) => {
                                 setValue('doctor_gender', value);
                             }}>
@@ -212,7 +213,7 @@ export const AddDoctorScreen = () => {
                         <Picker
                             style={SigninFormStyles?.dropDown}
                             selectedValue={getValues('speciality')}
-                            mode={'dialog'}
+                            mode={'dropdown'}
                             onValueChange={(value) => {
                                 setValue('speciality', value);
                             }}>
@@ -225,26 +226,25 @@ export const AddDoctorScreen = () => {
                         </Picker>
                         {errors?.speciality?.message && <ErrorMessage message={errors?.speciality?.message} />}
                     </View>
-                    <Text style={styles?.highlightedParagraph}>
-                        Work days
-                    </Text>
-                    {
-                        DaysList?.map((day) => (
-                            <Controller
-                                key={day}
-                                name={`work_days.${day as keyof Work_days}`}
-                                control={control}
-                                render={({ field }) => (
-                                    <CustomCheckbox
-                                        text={day}
-                                        isChecked={field?.value}
-                                        onChange={field?.onChange}
-                                        iconSize={26}
-                                        iconColor={colors?.BLUE}
-                                        textStyle={styles?.capitalizedContent} />
-                                )} />
-                        ))
-                    }
+                    <View style={style?.workDaysContainer}>
+                        {
+                            DaysList?.map((day) => (
+                                <Controller
+                                    key={day}
+                                    name={`work_days.${day as keyof Work_days}`}
+                                    control={control}
+                                    render={({ field }) => (
+                                        <CustomCheckbox
+                                            text={day}
+                                            isChecked={field?.value}
+                                            onChange={field?.onChange}
+                                            iconSize={26}
+                                            iconColor={colors?.BLUE}
+                                            textStyle={styles?.capitalizedContent} />
+                                    )} />
+                            ))
+                        }
+                    </View>
                     <CustomButton
                         type={CustomButtonTypes.OPASITYBUTTON}
                         title={'Add'}
@@ -267,3 +267,23 @@ export const AddDoctorScreen = () => {
         </ScrollView>
     );
 };
+
+const style = StyleSheet.create({
+    screen: {
+        ...styles?.screen,
+        backgroundColor: colors?.WHITE,
+        paddingHorizontal: 30,
+    },
+    container: {
+        gap: 35,
+    },
+    workDaysContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 30,
+    },
+    label: {
+        fontFamily: fonts?.MEDIUM,
+        fontSize: 20,
+    },
+});

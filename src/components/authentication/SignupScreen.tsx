@@ -100,7 +100,7 @@ export const SignupScreen = () => {
         }
     };
     return (
-        <ScrollView>
+        <ScrollView >
             <View style={SigninFormStyles?.screen}>
                 <View style={SigninFormStyles.imageContainer}>
                     <Image source={logo} style={SigninFormStyles?.image} />
@@ -133,13 +133,12 @@ export const SignupScreen = () => {
                     />
                     <View>
                         <Picker
-                            style={SigninFormStyles?.dropDown}
                             selectedValue={getValues('gender')}
                             mode={'dropdown'}
                             onValueChange={(value) => {
                                 setValue('gender', value);
                             }}>
-                            <Picker.Item label={'Male'} value={UserGender?.MALE} style={SigninFormStyles?.dropDownItem} />
+                            <Picker.Item label={'Male'} value={UserGender?.MALE} style={SigninFormStyles?.dropDownItem}  />
                             <Picker.Item label={'Female'} value={UserGender?.FEMALE} style={SigninFormStyles?.dropDownItem} />
                         </Picker>
                         {errors?.gender?.message && <ErrorMessage message={errors?.gender?.message}/>}

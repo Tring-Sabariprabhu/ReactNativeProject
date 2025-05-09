@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import { getCurrentUser } from 'src/MockDatabase/MockAPIs/auth';
 import { setUser } from 'src/Redux/userSlice';
 import { privateScreens } from 'src/Assets/Enums/screens';
-import { privateRoutes } from 'src/Routes/privateRoutes';
+import { adminRoutes, privateRoutes } from 'src/Routes/privateRoutes';
 import { DrawerContent } from 'src/Components/Custom/DrawerContent';
 
 interface DrawerIconProps {
@@ -63,7 +63,7 @@ export const DashBaordLayout = () => {
                             borderRadius: 10,
                         },
                         drawerActiveTintColor: colors?.DARK_BLUE,
-                        drawerType: 'front',
+
                     }}>
                 {privateRoutes?.map((screen, index) => {
                     if (screen?.name === privateScreens?.Home || (user?.user_role && screen?.roles?.includes(user?.user_role))) {

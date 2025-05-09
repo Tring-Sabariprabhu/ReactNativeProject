@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextStyle, View } from 'react-native';
+import { StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
 import Modal from 'react-native-modal';
 // import { styles } from 'src/Assets/Styles/global';
 import { CustomButton, CustomButtonTypes } from '../CustomButton/CustomButton';
@@ -21,16 +21,30 @@ enum PopupColors {
 interface CustomPopupProps {
     type: CustomPopupTypes
     isOpen: boolean
-    closeButtonText: string
+    closeButtonText: string,
     onClose: () => void,
     title?: string
     titleStyle?: TextStyle
     textBody?: string
     childComponent?: ReactNode
+    buttonStyle?: ViewStyle
+    buttonTextStyle?: TextStyle
     successButtonText?: string
     onSuccess?: () => void
 }
-export const CustomPopup = ({ type, title, titleStyle, textBody, isOpen, onClose, closeButtonText, onSuccess, successButtonText, childComponent }: CustomPopupProps) => {
+export const CustomPopup = ({ type,
+                            title,
+                            titleStyle,
+                            textBody,
+                            isOpen,
+                            onClose,
+                            closeButtonText,
+                            onSuccess,
+                            successButtonText,
+                            childComponent,
+                            buttonStyle,
+                            buttonTextStyle,
+                            }: CustomPopupProps) => {
 
     return (
         <Modal
@@ -52,16 +66,16 @@ export const CustomPopup = ({ type, title, titleStyle, textBody, isOpen, onClose
                 {childComponent}
                 <View style={style?.modalFooter}>
                     <CustomButton
-                        buttonStyle={{ ...style?.button, backgroundColor: PopupColors[type] }}
-                        textStyle={style?.buttonTextStyle}
+                        buttonStyle={{ ...style?.button, backgroundColor: PopupColors[type], ...buttonStyle }}
+                        textStyle={{...style?.buttonTextStyle, ...buttonTextStyle}}
                         type={CustomButtonTypes.OPASITYBUTTON}
                         title={closeButtonText}
                         onPress={onClose} />
                     {onSuccess &&
                         successButtonText &&
                         <CustomButton
-                            buttonStyle={{ ...style?.button, backgroundColor: PopupColors[type] }}
-                            textStyle={style?.buttonTextStyle}
+                            buttonStyle={{ ...style?.button, backgroundColor: PopupColors[type], ...buttonStyle }}
+                            textStyle={{...style?.buttonTextStyle, ...buttonTextStyle}}
                             type={CustomButtonTypes.OPASITYBUTTON}
                             title={successButtonText}
                             onPress={onSuccess} />}
@@ -102,6 +116,7 @@ const style = StyleSheet.create({
     button: {
         borderRadius: 5,
         backgroundColor: colors?.BLUE,
+        padding:5,
         paddingHorizontal: 12,
     },
     buttonTextStyle: {

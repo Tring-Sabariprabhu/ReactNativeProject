@@ -2,6 +2,7 @@ export enum publicScreens {
     Signin = 'Signin',
     Signup = 'Signup',
 }
+
 export enum privateScreens {
     Home = 'Home',
     Doctors = 'Doctors',
@@ -10,15 +11,3 @@ export enum privateScreens {
     ViewAppointments = 'ViewAppointments',
     AddDoctor = 'AddDoctor',
 }
-
-export const adminRoutes = [
-    privateScreens?.Home,
-    privateScreens?.AddDoctor,
-    privateScreens?.Doctors,
-    privateScreens?.Patients,
-];
-export const doctorRoutes = [
-    privateScreens?.Home,
-    privateScreens?.ViewAppointments,
-];
-

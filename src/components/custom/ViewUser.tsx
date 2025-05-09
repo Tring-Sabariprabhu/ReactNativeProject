@@ -85,14 +85,15 @@ const style = StyleSheet.create({
     },
     label: {
         ...styles?.capitalizedContent,
-        fontFamily: fonts?.MEDIUM,
+        // fontFamily: fonts?.MEDIUM,
+        fontSize: 18,
     },
     content: {
         ...styles?.paragraph,
-        fontSize: 17,
+        fontSize: 18,
     },
     contentWithCapitalized: {
         ...styles?.capitalizedContent,
-        fontSize: 16,
+        fontSize: 18,
     },
 });

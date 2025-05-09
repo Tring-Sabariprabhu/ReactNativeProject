@@ -8,47 +8,6 @@ import { PatientsScreen } from 'src/Components/Screens/PatientsScreen';
 import { ViewAppointmentsScreen } from 'src/Components/Screens/ViewAppointmentsScreen';
 import { UserRole } from 'src/MockDatabase/Enums/users';
 
-
-// export const privateRoutes= {
-//     Home: {
-//         name: privateScreens?.Home,
-//         component: HomeScreen,
-//         options: {
-//             headerTitle: 'Dashboard',
-//             title: 'Dashboard',
-//         },
-//         iconName: 'home',
-//     },
-//     BookAppointment: {
-//         name: privateScreens?.BookAppointment,
-//         component: BookAppointmentScreen,
-//         options: {
-//             headerTitle: 'Book Appointment',
-//             title: 'Book Appointment',
-//         },
-//         iconName: 'add',
-//     },
-//     Doctors: {
-//         name: privateScreens?.Doctors,
-//         component: DoctorsScreen,
-//         iconName: 'groups',
-//     },
-//     Patients: {
-//         name: privateScreens?.Patients,
-//         component: PatientsScreen,
-//         iconName: 'groups',
-//     },
-//     AddDoctor: {
-//         name: privateScreens?.AddDoctor,
-//         component: AddDoctorScreen,
-//         options: {
-//             headerTitle: 'Add Doctor',
-//             title: 'Add Doctor',
-//         },
-//         iconName: 'person-add',
-//     },
-// };
-
 export const privateRoutes = [
     {
         name: privateScreens?.Home,
@@ -64,7 +23,7 @@ export const privateRoutes = [
         name: privateScreens?.BookAppointment,
         component: BookAppointmentScreen,
         roles: [UserRole?.PATIENT],
-        options:{
+        options: {
             headerTitle: 'Book Appointment',
             title: 'Book Appointment',
         },
@@ -74,7 +33,7 @@ export const privateRoutes = [
         name: privateScreens?.ViewAppointments,
         component: ViewAppointmentsScreen,
         roles: [UserRole?.DOCTOR, UserRole?.PATIENT],
-        options:{
+        options: {
             headerTitle: 'View Appointments',
             title: 'View Appointments',
         },
@@ -103,3 +62,4 @@ export const privateRoutes = [
         iconName: 'person-add',
     },
 ];
+
