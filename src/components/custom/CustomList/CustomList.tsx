@@ -1,41 +1,61 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from 'src/Assets/Enums/colors';
+interface WhenPageMovedProps {
+    limit: number,
+    offset: number
+}
 interface CustomListProps<T> {
     listDirection: 'row' | 'column',
     listData: ArrayLike<T> | undefined
     listStyle?: ViewStyle
     renderItem: (props: ListRenderItemInfo<T>) => ReactElement
     paginatorProps?: {
-        numberOfPages: number
+        dataCount: number
         direction: 'center' | 'flex-start' | 'flex-end'
         containerSize: number
         dataPerPage: number
-        whenPageMoved: (page: number) => void
+        whenPageMoved: ({ limit, offset }: WhenPageMovedProps) => void
     }
 }
 export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem, paginatorProps }: CustomListProps<T>) => {
     const isHorizontal = listDirection === 'row';
     const iconSize = 30 + (paginatorProps?.containerSize ? paginatorProps?.containerSize : 0);
     const [activePage, setActivePage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+
+    useState(() => {
+        if (paginatorProps?.dataCount) {
+            const { dataCount, dataPerPage } = paginatorProps;
+            setTotalPages(dataCount % dataPerPage === 0 ? dataCount / dataPerPage : parseInt((dataCount / dataPerPage).toString()) + 1);
+        }
+    }, [paginatorProps]);
 
     const moveForward = () => {
-        if (paginatorProps && activePage < (paginatorProps?.numberOfPages)) {
+        if (paginatorProps && activePage < (totalPages)) {
             setActivePage(activePage + 1);
+            paginatorProps?.whenPageMoved(
+                {
+                    limit: paginatorProps?.dataPerPage,
+                    offset: (activePage) * paginatorProps?.dataPerPage,
+                });
         }
-        paginatorProps?.whenPageMoved(activePage + 1);
     };
     const moveBackward = () => {
         if (activePage > 1) {
             setActivePage(activePage - 1);
+            paginatorProps?.whenPageMoved(
+                {
+                    limit: paginatorProps?.dataPerPage,
+                    offset: (activePage - 2) * paginatorProps?.dataPerPage,
+                });
         }
-        paginatorProps?.whenPageMoved(activePage - 1);
     };
     const isFirstPageActive = activePage === 1;
-    const isLastPageActive = activePage === paginatorProps?.numberOfPages;
+    const isLastPageActive = activePage === totalPages;
     return (
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
             {
                 listData &&
                 <>
@@ -73,7 +93,7 @@ export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem,
                                 }
                                 <View>
                                     <Text style={style?.page}>
-                                        ...  {paginatorProps?.numberOfPages}
+                                        ...  {totalPages}
                                     </Text>
                                 </View>
                                 <TouchableOpacity style={style?.navigatorBox}

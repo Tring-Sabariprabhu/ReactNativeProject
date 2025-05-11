@@ -272,10 +272,11 @@ const style = StyleSheet.create({
     screen: {
         ...styles?.screen,
         backgroundColor: colors?.WHITE,
-        paddingHorizontal: 30,
     },
     container: {
-        gap: 35,
+        paddingHorizontal: 30,
+        paddingVertical: 20,
+        gap: 40,
     },
     workDaysContainer: {
         flexDirection: 'row',

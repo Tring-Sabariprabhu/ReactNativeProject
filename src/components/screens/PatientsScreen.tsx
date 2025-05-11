@@ -1,32 +1,27 @@
-import { useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { fonts } from 'src/Assets/Fonts';
 import { styles } from 'src/Assets/Styles/global';
-import { getAllPatients } from 'src/MockDatabase/MockAPIs/users';
+import { getAllPatients, getPatientsCount } from 'src/MockDatabase/MockAPIs/users';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
 import { colors } from 'src/Assets/Enums/colors';
 import { Patient, ViewUser } from '../Custom/ViewUser';
 import { CustomList } from '../Custom/CustomList/CustomList';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '../Authentication/SigninScreen';
+import { User } from 'src/MockDatabase/Types/Types';
 
 export const PatientsScreen = () => {
-    const [patients, setPatients] = useState(getAllPatients());
+    const navigation = useNavigation<NavigationProp>();
     const [showPopup, setShowPopup] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState<Patient>();
-    const leftActions = () => {
-        return (
-            <View style={[ style?.person, style?.swipeActions]}>
-                <Text style={style?.swipableText}>Delete</Text>
-            </View>
-        );
-    };
-    const rightActions = () => {
-        return (
-            <View style={[ style?.person, style?.swipeActions]}>
-                <Text style={style?.swipableText}>View</Text>
-            </View>
-        );
-    };
+    const limit = 3;
+    const [patients, setPatients] = useState<User[] | undefined>();
+    useEffect(() => {
+        setPatients(getAllPatients({ limit, offset: 0 }));
+    }, []);
+
     return (
         <View style={style?.screen}>
             {
@@ -35,24 +30,26 @@ export const PatientsScreen = () => {
                     listData={patients}
                     listStyle={style?.listContainer}
                     paginatorProps={{
-                        numberOfPages: 1,
+                        dataCount: getPatientsCount(),
+                        dataPerPage: limit,
                         direction: 'center',
                         containerSize: 3,
-                        whenPageMoved(page) {
-                            setPatients(getAllPatients());
+                        whenPageMoved(props) {
+                            setPatients(getAllPatients({
+                                limit: limit,
+                                offset: props?.offset,
+                            }));
                         },
                     }}
                     renderItem={({ item: patient }) => (
-                        <Swipeable
-                            key={patient?.user_id}
-                            renderLeftActions={leftActions}
-                            renderRightActions={rightActions}
-                            onSwipeableOpen={(action)=> console.log(action)}>
-                            <View style={style?.person}>
-                                <Text style={styles?.paragraph}>Patient name </Text>
-                                <Text style={style?.person_name}>{patient?.user_name}</Text>
-                            </View>
-                        </Swipeable>
+                        <View style={style?.person} key={patient?.user_id}>
+                            <Text style={styles?.paragraph}>
+                                Patient name
+                            </Text>
+                            <Text style={style?.person_name}>
+                                {patient?.user_name}
+                            </Text>
+                        </View>
                     )} />
             }
             <CustomPopup
@@ -72,7 +69,7 @@ export const PatientsScreen = () => {
 export const style = StyleSheet.create({
     swipeActions: {
         backgroundColor: colors?.BLUE,
-        width: "100%",
+        width: '100%',
     },
     swipableText: {
         ...styles?.paragraph,
@@ -85,6 +82,7 @@ export const style = StyleSheet.create({
         gap: 20,
     },
     listContainer: {
+        // height: '20%',
         padding: 20,
         gap: 20,
     },

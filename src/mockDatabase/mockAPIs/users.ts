@@ -14,10 +14,18 @@ interface addUserProps {
     speciality: DoctorSpecialists,
     work_days: Work_days,
 }
-export const getAllPatients = () => {
+interface getAllUsersProps {
+    limit: number,
+    offset: number
+}
+export const getAllPatients = ({limit, offset}: getAllUsersProps) => {
     try {
+        console.log(`limit: ${limit} , offset: ${offset}`);
         const patients = users?.filter((user) => user?.user_role === UserRole?.PATIENT);
-        return patients;
+        if(offset === 0){
+            return patients?.slice(0, limit);
+        }
+        return patients?.slice(offset, offset + limit);
     }
     catch (err) {
         if (err instanceof Error) {
@@ -25,9 +33,22 @@ export const getAllPatients = () => {
         }
     }
 };
-export const getAllDoctors = () => {
+export const getPatientsCount = ()=>{
+    const patients = users?.filter((user)=> user?.user_role === UserRole?.PATIENT);
+    return patients?.length;
+};
+export const getDoctorsCount = ()=>{
+    const patients = users?.filter((user)=> user?.user_role === UserRole?.DOCTOR);
+    return patients?.length;
+};
+export const getAllDoctors = ({limit, offset}: getAllUsersProps) => {
     try {
         let allDoctors = users?.filter((user) => user?.user_role === UserRole?.DOCTOR);
+        if(offset === 0){
+            allDoctors = allDoctors?.slice(0, limit);
+        }else{
+            allDoctors = allDoctors?.slice(offset, offset + limit);
+        }
         allDoctors = allDoctors?.map((user) => {
             const doctorDetails = doctors?.find((doctor) => doctor?.doctor_id === user?.user_id);
             return (

@@ -1,30 +1,33 @@
 import { Text, View } from 'react-native';
 import { styles } from 'src/Assets/Styles/global';
 import { style } from './PatientsScreen';
-import { getAllDoctors } from 'src/MockDatabase/MockAPIs/users';
+import { getAllDoctors, getDoctorsCount } from 'src/MockDatabase/MockAPIs/users';
 import { useEffect, useState } from 'react';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
 import { User } from 'src/MockDatabase/Types/Types';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../Authentication/SigninScreen';
 import { ViewUser } from '../Custom/ViewUser';
 import { CustomList } from '../Custom/CustomList/CustomList';
-import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 
 export const DoctorsScreen = () => {
-    const [doctors, setDoctors] = useState(getAllDoctors());
+    const navigation = useNavigation<NavigationProp>();
     const [selectedDoctor, setSelectedDoctor] = useState<User>();
     const [showPopup, setShowPopup] = useState(false);
-    const navigation = useNavigation<NavigationProp>();
+    const [doctors, setDoctors] = useState<User[] | undefined>();
+    const limit = 3;
 
     const refetch = () => {
-        setDoctors(getAllDoctors());
+        setDoctors(getAllDoctors({limit, offset: 0 }));
     };
 
     useEffect(() => {
         navigation?.addListener('focus', refetch);
     }, [navigation]);
+
+    useEffect(()=>{
+        refetch();
+    },[]);
     return (
         <View style={style?.screen}>
             {
@@ -33,28 +36,22 @@ export const DoctorsScreen = () => {
                     listData={doctors}
                     listStyle={style?.listContainer}
                     paginatorProps={{
-                        numberOfPages: 1,
+                        dataCount: getDoctorsCount(),
+                        dataPerPage: limit,
                         direction: 'center',
                         containerSize: 2,
-                        startingPage: 1,
-                        whenPageMoved(page) {
-                            setDoctors(getAllDoctors());
+                        whenPageMoved(props) {
+                            setDoctors(getAllDoctors({
+                                limit,
+                                offset: props?.offset,
+                            }));
                         },
                     }}
                     renderItem={({ item: doctor }) => (
-                        <GestureRecognizer
-                            key={doctor?.user_id}
-                            onSwipeLeft={() => {
-                                if (doctor) {
-                                    setSelectedDoctor(doctor);
-                                }
-                                setShowPopup(true);
-                            }}>
-                            <View style={style?.person}>
-                                <Text style={styles?.paragraph}>Doctor name </Text>
-                                <Text style={style?.person_name}>{doctor?.user_name}</Text>
-                            </View>
-                        </GestureRecognizer>
+                        <View style={style?.person} key={doctor?.doctor_id}>
+                            <Text style={styles?.paragraph}>Doctor name </Text>
+                            <Text style={style?.person_name}>{doctor?.user_name}</Text>
+                        </View>
                     )} />
             }
             <CustomPopup
