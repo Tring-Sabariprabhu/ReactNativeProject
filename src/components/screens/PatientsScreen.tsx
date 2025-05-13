@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { fonts } from 'src/Assets/Fonts';
 import { styles } from 'src/Assets/Styles/global';
 import { getAllPatients, getPatientsCount } from 'src/MockDatabase/MockAPIs/users';
@@ -17,9 +16,19 @@ export const PatientsScreen = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState<Patient>();
     const limit = 3;
+    const [totalCount, setTotalCount] = useState(0);
     const [patients, setPatients] = useState<User[] | undefined>();
+
+    const refetch = () => {
+        setTotalCount(getPatientsCount());
+    };
+
     useEffect(() => {
-        setPatients(getAllPatients({ limit, offset: 0 }));
+        navigation?.addListener('focus', refetch);
+    }, [navigation]);
+
+    useEffect(() => {
+        refetch();
     }, []);
 
     return (
@@ -30,10 +39,10 @@ export const PatientsScreen = () => {
                     listData={patients}
                     listStyle={style?.listContainer}
                     paginatorProps={{
-                        dataCount: getPatientsCount(),
+                        totalCount: totalCount,
                         dataPerPage: limit,
-                        direction: 'center',
-                        containerSize: 3,
+                        containerPostion: 'center',
+                        containerSize: 2,
                         whenPageMoved(props) {
                             setPatients(getAllPatients({
                                 limit: limit,
@@ -42,7 +51,11 @@ export const PatientsScreen = () => {
                         },
                     }}
                     renderItem={({ item: patient }) => (
-                        <View style={style?.person} key={patient?.user_id}>
+                        <View style={style?.person} key={patient?.user_id} onTouchStart={() => {
+                            console.log(patient);
+                            setSelectedPatient(patient);
+                            setShowPopup(true);
+                        }}>
                             <Text style={styles?.paragraph}>
                                 Patient name
                             </Text>
@@ -59,9 +72,8 @@ export const PatientsScreen = () => {
                 onClose={() => setShowPopup(false)}
                 closeButtonText={'Ok'}
                 childComponent={ViewUser(selectedPatient)}
-                buttonStyle={style?.popupButton}
-                buttonTextStyle={style?.popupButtonText}
-            />
+                buttonStyle={styles?.popupButton}
+                buttonTextStyle={styles?.popupButtonText} />
         </View>
     );
 };
@@ -80,10 +92,10 @@ export const style = StyleSheet.create({
         ...styles?.screen,
         backgroundColor: colors?.WHITE,
         gap: 20,
+        padding: 20,
     },
     listContainer: {
         // height: '20%',
-        padding: 20,
         gap: 20,
     },
     heading: {
@@ -116,11 +128,5 @@ export const style = StyleSheet.create({
         textTransform: 'capitalize',
         fontSize: 20,
         fontFamily: fonts?.MEDIUM,
-    },
-    popupButton: {
-        padding: 2,
-    },
-    popupButtonText: {
-        fontSize: 22,
     },
 });

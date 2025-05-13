@@ -10,12 +10,10 @@ import { CustomPopup, CustomPopupTypes } from './CustomPopup/CustomPopup';
 import { RootState } from 'src/Redux/store';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../Authentication/SigninScreen';
-
-
-
+import { styles } from 'src/Assets/Styles/global';
 
 export const DrawerContent = (props: DrawerContentComponentProps) => {
-    const user = useSelector((state : RootState)=> state?.user);
+    const user = useSelector((state: RootState) => state?.user);
     const dispatch = useDispatch();
     const [confirmPopup, setConfirmPopup] = useState(false);
     const navigation = useNavigation<NavigationProp>();
@@ -25,7 +23,7 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
         dispatch(setUser({}));
         setConfirmPopup(false);
     };
-    const handleLogout = ()=>{
+    const handleLogout = () => {
         setConfirmPopup(true);
         navigation.dispatch(DrawerActions.closeDrawer());
     };
@@ -52,14 +50,15 @@ export const DrawerContent = (props: DrawerContentComponentProps) => {
                 </View>
             </View>
             <CustomPopup
-                type={CustomPopupTypes.INFO}
+                type={CustomPopupTypes?.INFO}
                 isOpen={confirmPopup}
                 title={'Do you want to logout ? '}
                 closeButtonText={'No'}
                 successButtonText={'Yes'}
                 onSuccess={logout}
-                onClose={()=>setConfirmPopup(false)}
-                />
+                onClose={() => setConfirmPopup(false)}
+                buttonStyle={styles?.popupButton}
+                buttonTextStyle={styles?.popupButtonText} />
         </DrawerContentScrollView>
     );
 };

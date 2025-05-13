@@ -12,22 +12,26 @@ import { CustomList } from '../Custom/CustomList/CustomList';
 
 export const DoctorsScreen = () => {
     const navigation = useNavigation<NavigationProp>();
-    const [selectedDoctor, setSelectedDoctor] = useState<User>();
     const [showPopup, setShowPopup] = useState(false);
     const [doctors, setDoctors] = useState<User[] | undefined>();
-    const limit = 3;
+    const [selectedDoctor, setSelectedDoctor] = useState<User | undefined>();
+    const [totalCount, setTotalCount] = useState(0);
+    const limit = 1;
 
     const refetch = () => {
-        setDoctors(getAllDoctors({limit, offset: 0 }));
+        setTotalCount(getDoctorsCount());
     };
 
     useEffect(() => {
-        navigation?.addListener('focus', refetch);
+        navigation?.addListener('focus', () => {
+            refetch();
+        });
     }, [navigation]);
 
-    useEffect(()=>{
+    useEffect(() => {
         refetch();
-    },[]);
+    }, []);
+
     return (
         <View style={style?.screen}>
             {
@@ -36,24 +40,28 @@ export const DoctorsScreen = () => {
                     listData={doctors}
                     listStyle={style?.listContainer}
                     paginatorProps={{
-                        dataCount: getDoctorsCount(),
+                        totalCount: totalCount,
                         dataPerPage: limit,
-                        direction: 'center',
                         containerSize: 2,
-                        whenPageMoved(props) {
+                        containerPostion: 'center',
+                        whenPageMoved: (props) => {
                             setDoctors(getAllDoctors({
-                                limit,
+                                limit: limit,
                                 offset: props?.offset,
                             }));
                         },
                     }}
                     renderItem={({ item: doctor }) => (
-                        <View style={style?.person} key={doctor?.doctor_id}>
-                            <Text style={styles?.paragraph}>Doctor name </Text>
+                        <View style={style?.person}>
+                            <Text style={styles?.paragraph} onPress={() => {
+                                console.log(doctor);
+                                setSelectedDoctor(doctor);
+                                setShowPopup(true);
+                            }}>Doctor </Text>
                             <Text style={style?.person_name}>{doctor?.user_name}</Text>
+                            <Text style={style?.person_name}>{doctor?.speciality}</Text>
                         </View>
-                    )} />
-            }
+                    )} />}
             <CustomPopup
                 type={CustomPopupTypes?.INFO}
                 title={'Doctor details'}
@@ -61,7 +69,9 @@ export const DoctorsScreen = () => {
                 isOpen={showPopup}
                 closeButtonText={'Ok'}
                 onClose={() => setShowPopup(false)}
-                childComponent={ViewUser(selectedDoctor)} />
+                childComponent={ViewUser(selectedDoctor)}
+                buttonStyle={styles?.popupButton}
+                buttonTextStyle={styles?.popupButtonText} />
         </View>
     );
 };

@@ -1,7 +1,6 @@
 import { UserGender, UserRole } from '../Enums/users';
 import { User } from '../Types/Types';
 
-
 export const users: User[] = [
     {
         user_id: '1',

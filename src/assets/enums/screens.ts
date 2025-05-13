@@ -10,4 +10,5 @@ export enum privateScreens {
     BookAppointment = 'BookAppointment',
     ViewAppointments = 'ViewAppointments',
     AddDoctor = 'AddDoctor',
+    AppointmentsArrived = 'AppointmentsArrived',
 }

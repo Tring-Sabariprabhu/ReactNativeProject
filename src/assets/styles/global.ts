@@ -5,11 +5,11 @@ import { colors } from '../Enums/colors';
 export const styles = StyleSheet?.create({
     screen: {
         flex: 1,
-        paddingTop: StatusBar?.currentHeight,
+        padding: StatusBar?.currentHeight,
     },
     textInput: {
-        fontFamily: fonts?.LIGHT,
-        borderColor: colors?.LIGHT_GRAY,
+        fontFamily: fonts?.REGULAR,
+        borderColor: colors?.GRAY,
         borderWidth: 2,
         borderRadius: 10,
     },
@@ -28,12 +28,30 @@ export const styles = StyleSheet?.create({
     },
     error: {
         color: colors?.RED,
-        paddingStart: 10,
+        paddingTop: 10,
         fontFamily: fonts?.LIGHT,
         fontSize: 14,
     },
-    button:{
+    button: {
         fontFamily: fonts?.MEDIUM,
+    },
+    popupButton: {
+        padding: 3,
+    },
+    popupButtonText: {
+        fontFamily: fonts?.REGULAR,
+        fontSize: 20,
+        paddingHorizontal: 6,
+    },
+     dropDown: {
+       backgroundColor: colors?.GRAY,
+        // borderWidth: 5,
+        // borderColor: colors?.BLACK,
+    },
+    dropDownItem: {
+        fontFamily: fonts?.REGULAR,
+        fontSize: 18,
+        padding: 10,
     },
 });
 

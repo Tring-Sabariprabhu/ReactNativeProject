@@ -12,14 +12,17 @@ export enum UserRole {
     PATIENT = 'patient',
     ADMIN = 'admin',
 }
-export const DaysList: string[] = [
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-    'sunday',
-];
 
-
+export enum Slots  {
+    slot1 ='8am - 12am',
+    slot2 = '2pm - 5pm',
+}
+export enum Days {
+    monday = 'Monday',
+    tuesday = 'Tuesday',
+    wednesday = 'Wednesday',
+    thursday = 'Thursday',
+    friday = 'Friday',
+    saturday = 'Saturday',
+    sunday = 'Sunday'
+}

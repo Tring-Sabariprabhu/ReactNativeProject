@@ -162,7 +162,7 @@ export const SigninFormStyles = StyleSheet.create({
     },
     heading: {
         fontFamily: fonts?.MEDIUM,
-        color: colors?.BLUE,
+        color: colors?.DARK_BLUE,
         textAlign: 'center',
         fontSize: 35,
     },
@@ -175,20 +175,11 @@ export const SigninFormStyles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
     },
-    dropDown: {
-        backgroundColor: colors.LIGHT_GRAY,
-        borderColor: colors?.BLACK,
-        borderWidth: 1,
-    },
-    dropDownItem: {
-        ...styles?.paragraph,
-        padding: 10,
-    },
     button: {
         ...styles?.button,
         borderRadius: 10,
         paddingVertical: 6,
-        backgroundColor: colors?.BLUE,
+        backgroundColor: colors?.DARK_BLUE,
     },
     buttonTextStyle: {
         color: colors?.WHITE,
@@ -206,6 +197,6 @@ export const SigninFormStyles = StyleSheet.create({
     navigator: {
         fontFamily: fonts?.MEDIUM,
         fontSize: 22,
-        color: colors?.BLUE,
+        color: colors?.DARK_BLUE,
     },
 });

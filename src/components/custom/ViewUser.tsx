@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { fonts } from 'src/Assets/Fonts';
 import { styles } from 'src/Assets/Styles/global';
-import { DaysList, DoctorSpecialists, UserGender } from 'src/MockDatabase/Enums/users';
-import { Work_days } from 'src/MockDatabase/Types/Types';
+import { Days, DoctorSpecialists, UserGender } from 'src/MockDatabase/Enums/users';
 
 interface User {
     user_name: string
@@ -12,7 +11,7 @@ interface User {
 }
 export interface Doctor extends User {
     speciality: DoctorSpecialists,
-    work_days: Work_days
+    work_days: Days[]
 }
 
 export interface Patient extends User { }
@@ -58,17 +57,16 @@ export const ViewUser = (user: Doctor | Patient | undefined) => {
                 user &&
                 'work_days' in user &&
                 user?.work_days &&
-                <View style={style?.contentContainer}>
+                <View style={{ flexDirection: 'row' }}>
                     <Text style={style?.label}>Work days : </Text>
-                    {
-                        DaysList?.map((day, index) => (
-                            user?.work_days[day as keyof Work_days] &&
-                            <Text style={style?.contentWithCapitalized} key={index}>
+                        {
+                            user?.work_days?.map((day, index) => (
+                            <Text key={day} style={style?.content}>
                                 {index > 0 && ', '}
                                 {day?.slice(0, 2)}
                             </Text>
-                        ))
-                    }
+                                ))
+                        }
                 </View>
             }
         </View>
@@ -77,7 +75,7 @@ export const ViewUser = (user: Doctor | Patient | undefined) => {
 
 const style = StyleSheet.create({
     viewContainer: {
-        padding: 5,
+        padding: 10,
     },
     contentContainer: {
         flexDirection: 'row',
@@ -85,7 +83,7 @@ const style = StyleSheet.create({
     },
     label: {
         ...styles?.capitalizedContent,
-        // fontFamily: fonts?.MEDIUM,
+        fontFamily: fonts?.MEDIUM,
         fontSize: 18,
     },
     content: {

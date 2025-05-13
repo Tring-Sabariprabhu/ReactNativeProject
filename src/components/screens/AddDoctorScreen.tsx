@@ -1,9 +1,9 @@
-import { Text, View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import { CustomTextInput } from '../Custom/CustomTextInput';
 import { Controller, useForm } from 'react-hook-form';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
 import { NavigationProp, SigninFormStyles } from '../Authentication/SigninScreen';
-import { addDoctor, getDoctor } from 'src/MockDatabase/MockAPIs/users';
+import { addDoctor } from 'src/MockDatabase/MockAPIs/users';
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,26 +12,44 @@ import { inputPatterns } from 'src/Validation/inputPatterns';
 import { inputTypes } from 'src/Assets/Enums/inputTypes';
 import { Picker } from '@react-native-picker/picker';
 import { ErrorMessage } from '../Custom/ErrorMessage';
-import { DaysList, DoctorSpecialists, UserGender } from 'src/MockDatabase/Enums/users';
+import { Days, DoctorSpecialists, Slots, UserGender } from 'src/MockDatabase/Enums/users';
 import { useEffect, useState } from 'react';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
 import { styles } from 'src/Assets/Styles/global';
 import { CustomCheckbox } from '../Custom/CustomCheckbox';
 import { colors } from 'src/Assets/Enums/colors';
-import { Work_days } from 'src/MockDatabase/Types/Types';
-import { Doctor, ViewUser } from '../Custom/ViewUser';
+import { SlotTimings } from 'src/MockDatabase/Types/Types';
 import { useNavigation } from '@react-navigation/native';
 import { privateScreens } from 'src/Assets/Enums/screens';
 import { fonts } from 'src/Assets/Fonts';
-
+interface DaySlots {
+    slot1: boolean
+    slot2: boolean
+}
+interface WorkDays {
+    monday: DaySlots;
+    tuesday: DaySlots;
+    wednesday: DaySlots;
+    thursday: DaySlots;
+    friday: DaySlots;
+    saturday: DaySlots;
+    sunday: DaySlots;
+}
 interface FormValues {
     doctor_name: string
     doctor_age: number
     doctor_gender: UserGender
     speciality: DoctorSpecialists
     email: string
-    work_days: Work_days
+    work_days: WorkDays
 }
+
+const DaySchema = yup
+    .object()
+    .shape({
+        slot1: yup.boolean().required(),
+        slot2: yup.boolean().required(),
+    }).required();
 const schema = yup
     .object()
     .shape({
@@ -51,13 +69,13 @@ const schema = yup
             .required('Speciality is required')
             .oneOf([DoctorSpecialists?.CARDIOLOGY, DoctorSpecialists?.DERMATOLOGY], 'Choose valid Speciality'),
         work_days: yup.object().shape({
-            monday: yup.boolean().required(),
-            tuesday: yup.boolean().required(),
-            wednesday: yup.boolean().required(),
-            thursday: yup.boolean().required(),
-            friday: yup.boolean().required(),
-            saturday: yup.boolean().required(),
-            sunday: yup.boolean().required(),
+            monday: DaySchema,
+            tuesday: DaySchema,
+            wednesday: DaySchema,
+            thursday: DaySchema,
+            friday: DaySchema,
+            saturday: DaySchema,
+            sunday: DaySchema,
         }).required(),
         email: yup.string()
             .trim()
@@ -66,9 +84,12 @@ const schema = yup
     });
 export const AddDoctorScreen = () => {
     const navigation = useNavigation<NavigationProp>();
-    const [doctorDetails, setDoctorDetails] = useState<Doctor>();
     const [confirmPopup, setConfirmPopup] = useState(false);
 
+    const defaultDay = {
+        slot1: false,
+        slot2: false,
+    };
     const defaultValues = {
         doctor_name: '',
         doctor_age: 0,
@@ -76,13 +97,13 @@ export const AddDoctorScreen = () => {
         speciality: DoctorSpecialists?.CARDIOLOGY,
         email: '',
         work_days: {
-            monday: false,
-            tuesday: false,
-            wednesday: false,
-            thursday: false,
-            friday: false,
-            saturday: false,
-            sunday: false,
+            monday: defaultDay,
+            tuesday: defaultDay,
+            wednesday: defaultDay,
+            thursday: defaultDay,
+            friday: defaultDay,
+            saturday: defaultDay,
+            sunday: defaultDay,
         },
     };
 
@@ -106,8 +127,27 @@ export const AddDoctorScreen = () => {
                     doctor_age,
                     doctor_gender,
                     speciality,
-                    work_days,
                 } = doctor;
+                const slotTimings: SlotTimings[] = [];
+                const work_days: Days[] = [];
+
+                for (const dayKey in doctor?.work_days) {
+                    const daySlots = Object.entries(doctor?.work_days[dayKey as keyof WorkDays]);
+                    let atleastOneSlotSelected = false;
+                    for (const [key, value] of daySlots) {
+                        if (value) {
+                            atleastOneSlotSelected = true;
+                            slotTimings.push({
+                                day: Days[dayKey as keyof WorkDays],
+                                slot: Slots[key as keyof DaySlots],
+                                status: 'Available',
+                            });
+                        }
+                    }
+                    if (atleastOneSlotSelected) {
+                        work_days.push(Days[dayKey as keyof WorkDays]);
+                    }
+                }
                 const result = addDoctor(
                     {
                         email: email?.trim()?.toLowerCase(),
@@ -116,6 +156,7 @@ export const AddDoctorScreen = () => {
                         doctor_gender,
                         speciality,
                         work_days,
+                        slotTimings,
                     });
                 if (result) {
                     Toast?.show({
@@ -145,22 +186,7 @@ export const AddDoctorScreen = () => {
         }
     };
 
-    const onSubmit = (formdata: FormValues) => {
-        const {
-            doctor_age,
-            doctor_gender,
-            doctor_name,
-            email,
-            speciality,
-            work_days } = formdata;
-        setDoctorDetails({
-            user_name: doctor_name?.trim(),
-            user_age: doctor_age,
-            email: email?.trim()?.toLowerCase(),
-            user_gender: doctor_gender,
-            speciality: speciality,
-            work_days: work_days,
-        });
+    const onSubmit = () => {
         setConfirmPopup(true);
     };
 
@@ -194,7 +220,8 @@ export const AddDoctorScreen = () => {
                     />
                     <View>
                         <Picker
-                            style={SigninFormStyles?.dropDown}
+                            style={styles?.dropDown}
+                            selectionColor={colors?.BLUE}
                             selectedValue={getValues('doctor_gender')}
                             mode={'dropdown'}
                             onValueChange={(value) => {
@@ -202,16 +229,16 @@ export const AddDoctorScreen = () => {
                             }}>
                             <Picker.Item label={'Male'}
                                 value={UserGender?.MALE}
-                                style={SigninFormStyles?.dropDownItem} />
+                                style={styles?.dropDownItem} />
                             <Picker.Item label={'Female'}
                                 value={UserGender?.FEMALE}
-                                style={SigninFormStyles?.dropDownItem} />
+                                style={styles?.dropDownItem} />
                         </Picker>
                         {errors?.doctor_gender?.message && <ErrorMessage message={errors?.doctor_gender?.message} />}
                     </View>
                     <View>
                         <Picker
-                            style={SigninFormStyles?.dropDown}
+                            style={styles?.dropDown}
                             selectedValue={getValues('speciality')}
                             mode={'dropdown'}
                             onValueChange={(value) => {
@@ -219,29 +246,41 @@ export const AddDoctorScreen = () => {
                             }}>
                             <Picker.Item label={'Cardiology'}
                                 value={DoctorSpecialists?.CARDIOLOGY}
-                                style={SigninFormStyles?.dropDownItem} />
+                                style={styles?.dropDownItem} />
                             <Picker.Item label={'Dermatology'}
                                 value={DoctorSpecialists?.DERMATOLOGY}
-                                style={SigninFormStyles?.dropDownItem} />
+                                style={styles?.dropDownItem} />
                         </Picker>
                         {errors?.speciality?.message && <ErrorMessage message={errors?.speciality?.message} />}
                     </View>
                     <View style={style?.workDaysContainer}>
                         {
-                            DaysList?.map((day) => (
-                                <Controller
-                                    key={day}
-                                    name={`work_days.${day as keyof Work_days}`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <CustomCheckbox
-                                            text={day}
-                                            isChecked={field?.value}
-                                            onChange={field?.onChange}
-                                            iconSize={26}
-                                            iconColor={colors?.BLUE}
-                                            textStyle={styles?.capitalizedContent} />
-                                    )} />
+                            Object.keys(getValues('work_days')).map((day) => (
+                                <View key={day} style={{ gap: 10 }} >
+                                    <View >
+                                        <Text style={style?.label}>{day}</Text>
+                                    </View>
+                                    <View style={{ gap: 15 }}>
+                                        {
+                                            Object.keys(getValues(`work_days.${day as keyof WorkDays}`)).map((slot, index) => (
+                                                <View key={index}>
+                                                    <Controller
+                                                        name={`work_days.${day as keyof WorkDays}.${slot as keyof DaySlots}`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <CustomCheckbox
+                                                                text={Slots[slot as keyof DaySlots]}
+                                                                isChecked={field?.value}
+                                                                onChange={field?.onChange}
+                                                                textStyle={style?.content}
+                                                                iconSize={25}
+                                                                iconColor={colors?.DARK_BLUE} />
+                                                        )} />
+                                                </View>
+                                            ))
+                                        }
+                                    </View>
+                                </View>
                             ))
                         }
                     </View>
@@ -261,8 +300,8 @@ export const AddDoctorScreen = () => {
                     closeButtonText={'No'}
                     successButtonText={'Yes'}
                     onSuccess={addDoctorProcess}
-                    childComponent={ViewUser(doctorDetails)}
-                />
+                    buttonStyle={styles?.popupButton}
+                    buttonTextStyle={styles?.popupButtonText} />
             </View>
         </ScrollView>
     );
@@ -274,17 +313,20 @@ const style = StyleSheet.create({
         backgroundColor: colors?.WHITE,
     },
     container: {
-        paddingHorizontal: 30,
-        paddingVertical: 20,
+        paddingHorizontal: 10,
         gap: 40,
     },
     workDaysContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
         gap: 30,
     },
     label: {
-        fontFamily: fonts?.MEDIUM,
-        fontSize: 20,
+        fontFamily: fonts?.REGULAR,
+        fontSize: 18,
+        textTransform: 'capitalize',
+    },
+    content: {
+        fontSize: 17,
+        fontFamily: fonts?.LIGHT,
+        textTransform: 'capitalize',
     },
 });

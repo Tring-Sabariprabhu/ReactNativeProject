@@ -9,8 +9,9 @@ import { useEffect } from 'react';
 import { getCurrentUser } from 'src/MockDatabase/MockAPIs/auth';
 import { setUser } from 'src/Redux/userSlice';
 import { privateScreens } from 'src/Assets/Enums/screens';
-import { adminRoutes, privateRoutes } from 'src/Routes/privateRoutes';
+import { privateRoutes, ScreenProps } from 'src/Routes/privateRoutes';
 import { DrawerContent } from 'src/Components/Custom/DrawerContent';
+import { HomeScreen } from 'src/Components/Screens/HomeScreen';
 
 interface DrawerIconProps {
     color: string
@@ -65,23 +66,32 @@ export const DashBaordLayout = () => {
                         drawerActiveTintColor: colors?.DARK_BLUE,
 
                     }}>
-                {privateRoutes?.map((screen, index) => {
-                    if (screen?.name === privateScreens?.Home || (user?.user_role && screen?.roles?.includes(user?.user_role))) {
-                        return (
-                            <Drawer.Screen name={screen?.name}
-                                component={screen?.component}
-                                key={index}
-                                options={
-                                    {
-                                        ...screen?.options,
-                                        drawerIcon: (props) => (
-                                            <DrawerIcon {...props} iconName={screen?.iconName} key={index} />
-                                        ),
-                                    }
-                                } />
-                        );
-                    }
-                })
+                <Drawer.Screen name={privateScreens?.Home}
+                    component={HomeScreen}
+                    options={
+                        {
+                            headerTitle: 'Dashboard',
+                            title: 'Dashboard',
+                            drawerIcon: (props) => (
+                                <DrawerIcon {...props} iconName={'home'} />
+                            ),
+                        }
+                    } />
+                {
+                    user?.user_role &&
+                    privateRoutes[user?.user_role]?.map((screen: ScreenProps, index) => (
+                        <Drawer.Screen name={screen?.name}
+                            component={screen?.component}
+                            key={index}
+                            options={
+                                {
+                                    ...screen?.options,
+                                    drawerIcon: (props) => (
+                                        <DrawerIcon {...props} iconName={screen?.iconName} key={index} />
+                                    ),
+                                }
+                            } />
+                    ))
                 }
             </Drawer.Navigator>
         </NavigationContainer>

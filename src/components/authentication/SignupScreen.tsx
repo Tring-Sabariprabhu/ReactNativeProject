@@ -133,13 +133,14 @@ export const SignupScreen = () => {
                     />
                     <View>
                         <Picker
+                            style={styles?.dropDown}
                             selectedValue={getValues('gender')}
                             mode={'dropdown'}
                             onValueChange={(value) => {
                                 setValue('gender', value);
                             }}>
-                            <Picker.Item label={'Male'} value={UserGender?.MALE} style={SigninFormStyles?.dropDownItem}  />
-                            <Picker.Item label={'Female'} value={UserGender?.FEMALE} style={SigninFormStyles?.dropDownItem} />
+                            <Picker.Item label={'Male'} value={UserGender?.MALE} style={styles?.dropDownItem}  />
+                            <Picker.Item label={'Female'} value={UserGender?.FEMALE} style={styles?.dropDownItem} />
                         </Picker>
                         {errors?.gender?.message && <ErrorMessage message={errors?.gender?.message}/>}
                     </View>

@@ -8,6 +8,8 @@
 import React, { useEffect, useState } from 'react';
 import {
   StatusBar,
+  StyleSheet,
+  View,
 } from 'react-native';
 
 import {
@@ -22,11 +24,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Loader } from 'src/Components/Custom/Loader';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/Redux/store';
+import { KeyboardAvoidingView } from 'react-native';
+import UserInactivity from 'react-native-user-inactivity';
+import { CustomPopup, CustomPopupTypes } from 'src/Components/Custom/CustomPopup/CustomPopup';
+import { fonts } from 'src/Assets/Fonts';
+import { styles } from 'src/Assets/Styles/global';
 
 function App(): React.JSX.Element {
   const [token, setToken] = useState<string | null>();
   const [loading, setLoading] = useState(true);
-  const user = useSelector((state: RootState)=> state?.user);
+  const user = useSelector((state: RootState) => state?.user);
 
   const fetchToken = () => {
     setLoading(true);
@@ -34,7 +41,7 @@ function App(): React.JSX.Element {
       setLoading(false);
       if (data) {
         setToken(data);
-      }else{
+      } else {
         setToken(null);
       }
     });
@@ -43,21 +50,50 @@ function App(): React.JSX.Element {
     fetchToken();
   }, [user]);
 
-  // AsyncStorage.clear();
+  const [active, setActive] = useState(true);
+  const [timer, setTimer] = useState(100000);
+  const [showPopup, setShowPopup] = useState(false);
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar
-          barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-          backgroundColor={isDarkMode ? Colors.darker : Colors.lighter}
-        />
-        {
-          loading ? <Loader /> :
-            (token ?
-              <DashBaordLayout  /> :
-              <AuthLayout />)
-        }
+        <KeyboardAvoidingView
+          behavior={'height'}
+          style={{ flex: 1 }}>
+          <UserInactivity
+            isActive={active}
+            timeForInactivity={timer}
+            onAction={(isActive) => {
+              console.log('User activity state: ', isActive);
+              setShowPopup(!isActive);
+              setActive(isActive);
+            }}>
+            <StatusBar
+              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+              backgroundColor={isDarkMode ? Colors.darker : Colors.lighter}
+            />
+            {
+              loading ?
+                <Loader /> :
+                (showPopup ?
+                  <View >
+                    <CustomPopup
+                      type={CustomPopupTypes.INFO}
+                      isOpen={showPopup}
+                      title={'InActivity Timeout'}
+                      closeButtonText={'Ok'}
+                      onClose={() => setShowPopup(false)}
+                      buttonStyle={styles?.popupButton}
+                      buttonTextStyle={styles?.popupButtonText}/>
+                  </View> :
+                  (token ?
+                    <DashBaordLayout /> :
+                        <AuthLayout />)
+                )
+
+            }
+          </UserInactivity>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </SafeAreaProvider>
   );

@@ -5,6 +5,7 @@ import { CustomButton, CustomButtonTypes } from '../CustomButton/CustomButton';
 import { fonts } from 'src/Assets/Fonts';
 import { ReactNode } from 'react';
 import { colors } from 'src/Assets/Enums/colors';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export enum CustomPopupTypes {
     SUCCESS = 'success',
@@ -17,6 +18,12 @@ enum PopupColors {
     info = colors?.BLUE,
     error = colors?.RED,
     view = colors?.DARK_BLUE,
+}
+enum IconNames {
+    success = 'check-circle',
+    info = 'info',
+    error = 'error',
+    view = 'remove-red-eye',
 }
 interface CustomPopupProps {
     type: CustomPopupTypes
@@ -33,18 +40,18 @@ interface CustomPopupProps {
     onSuccess?: () => void
 }
 export const CustomPopup = ({ type,
-                            title,
-                            titleStyle,
-                            textBody,
-                            isOpen,
-                            onClose,
-                            closeButtonText,
-                            onSuccess,
-                            successButtonText,
-                            childComponent,
-                            buttonStyle,
-                            buttonTextStyle,
-                            }: CustomPopupProps) => {
+    title,
+    titleStyle,
+    textBody,
+    isOpen,
+    onClose,
+    closeButtonText,
+    onSuccess,
+    successButtonText,
+    childComponent,
+    buttonStyle,
+    buttonTextStyle,
+}: CustomPopupProps) => {
 
     return (
         <Modal
@@ -52,8 +59,9 @@ export const CustomPopup = ({ type,
             style={style?.modal}>
             <View style={{ ...style?.container, borderColor: PopupColors[type] }}>
                 {title &&
-                    <View>
-                        <Text style={{...style?.heading, ...titleStyle}}>
+                    <View style={style?.heading}>
+                        <Icon name={IconNames[type]} color={PopupColors[type]} size={55} style={style?.iconStyle} />
+                        <Text style={{ ...style?.headingText, ...titleStyle }}>
                             {title}
                         </Text>
                     </View>}
@@ -66,16 +74,16 @@ export const CustomPopup = ({ type,
                 {childComponent}
                 <View style={style?.modalFooter}>
                     <CustomButton
-                        buttonStyle={{ ...style?.button, backgroundColor: PopupColors[type], ...buttonStyle }}
-                        textStyle={{...style?.buttonTextStyle, ...buttonTextStyle}}
+                        buttonStyle={{ ...style?.button, ...buttonStyle, backgroundColor: PopupColors[type] }}
+                        textStyle={{ ...style?.buttonTextStyle, ...buttonTextStyle }}
                         type={CustomButtonTypes.OPASITYBUTTON}
                         title={closeButtonText}
                         onPress={onClose} />
                     {onSuccess &&
                         successButtonText &&
                         <CustomButton
-                            buttonStyle={{ ...style?.button, backgroundColor: PopupColors[type], ...buttonStyle }}
-                            textStyle={{...style?.buttonTextStyle, ...buttonTextStyle}}
+                            buttonStyle={{ ...style?.button, ...buttonStyle, backgroundColor: PopupColors[type] }}
+                            textStyle={{ ...style?.buttonTextStyle, ...buttonTextStyle }}
                             type={CustomButtonTypes.OPASITYBUTTON}
                             title={successButtonText}
                             onPress={onSuccess} />}
@@ -91,7 +99,19 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    iconStyle: {
+        borderRadius: 50,
+        backgroundColor: colors?.WHITE,
+        padding: 5,
+        position: 'absolute',
+        bottom: '85%',
+    },
     heading: {
+        paddingTop: 10,
+        alignItems: 'center',
+        gap: 10,
+    },
+    headingText: {
         fontFamily: fonts?.MEDIUM,
         fontWeight: 600,
         fontSize: 20,
@@ -110,17 +130,14 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         gap: 20,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
+        padding: 10,
     },
     button: {
         borderRadius: 5,
         backgroundColor: colors?.BLUE,
-        padding:5,
-        paddingHorizontal: 12,
+        paddingHorizontal: 10,
     },
     buttonTextStyle: {
-        fontFamily: fonts?.MEDIUM,
         color: colors?.WHITE,
         fontSize: 18,
     },
