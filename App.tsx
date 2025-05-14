@@ -8,7 +8,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   StatusBar,
-  StyleSheet,
   View,
 } from 'react-native';
 
@@ -27,7 +26,6 @@ import { RootState } from 'src/Redux/store';
 import { KeyboardAvoidingView } from 'react-native';
 import UserInactivity from 'react-native-user-inactivity';
 import { CustomPopup, CustomPopupTypes } from 'src/Components/Custom/CustomPopup/CustomPopup';
-import { fonts } from 'src/Assets/Fonts';
 import { styles } from 'src/Assets/Styles/global';
 
 function App(): React.JSX.Element {

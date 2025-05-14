@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { fonts } from 'src/Assets/Fonts';
 import { styles } from 'src/Assets/Styles/global';
 import { getAllPatients, getPatientsCount } from 'src/MockDatabase/MockAPIs/users';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
-import { colors } from 'src/Assets/Enums/colors';
 import { Patient, ViewUser } from '../Custom/ViewUser';
 import { CustomList } from '../Custom/CustomList/CustomList';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../Authentication/SigninScreen';
 import { User } from 'src/MockDatabase/Types/Types';
+import { style } from 'src/Assets/Styles/list';
+import { Text, View } from 'react-native';
 
 export const PatientsScreen = () => {
     const navigation = useNavigation<NavigationProp>();
@@ -51,15 +50,12 @@ export const PatientsScreen = () => {
                         },
                     }}
                     renderItem={({ item: patient }) => (
-                        <View style={style?.person} key={patient?.user_id} onTouchStart={() => {
-                            console.log(patient);
-                            setSelectedPatient(patient);
-                            setShowPopup(true);
-                        }}>
-                            <Text style={styles?.paragraph}>
-                                Patient name
+                        <View style={style?.listItem}
+                            key={patient?.user_id}>
+                            <Text style={style?.listItemHeading}>
+                                Patient
                             </Text>
-                            <Text style={style?.person_name}>
+                            <Text style={style?.listItemContent}>
                                 {patient?.user_name}
                             </Text>
                         </View>
@@ -78,55 +74,3 @@ export const PatientsScreen = () => {
     );
 };
 
-export const style = StyleSheet.create({
-    swipeActions: {
-        backgroundColor: colors?.BLUE,
-        width: '100%',
-    },
-    swipableText: {
-        ...styles?.paragraph,
-        ...styles?.highlightedParagraph,
-        color: colors?.WHITE,
-    },
-    screen: {
-        ...styles?.screen,
-        backgroundColor: colors?.WHITE,
-        gap: 20,
-        padding: 20,
-    },
-    listContainer: {
-        // height: '20%',
-        gap: 20,
-    },
-    heading: {
-        fontSize: 22,
-        fontFamily: fonts?.LIGHT,
-    },
-    showPatientContainer: {
-        paddingLeft: 10,
-        paddingRight: 60,
-        gap: 15,
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    capitalizedContent: {
-        ...styles?.paragraph,
-        ...styles?.capitalizedContent,
-    },
-    person: {
-        ...styles?.paragraph,
-        paddingVertical: 20,
-        paddingHorizontal: 30,
-        borderRadius: 10,
-        borderWidth: 2,
-        borderColor: colors?.LIGHT_GRAY,
-        backgroundColor: colors?.WHITE,
-    },
-    person_name: {
-        textTransform: 'capitalize',
-        fontSize: 20,
-        fontFamily: fonts?.MEDIUM,
-    },
-});

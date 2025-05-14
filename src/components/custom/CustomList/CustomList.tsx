@@ -2,7 +2,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import { FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from 'src/Assets/Enums/colors';
-import { fonts } from 'src/Assets/Fonts';
+
 interface WhenPageMovedProps {
     limit: number,
     offset: number
@@ -22,13 +22,12 @@ interface CustomListProps<T> {
 }
 export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem, paginatorProps }: CustomListProps<T>) => {
     const isHorizontal = listDirection === 'row';
-    const iconSize = 35;
     const [activePage, setActivePage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>();
     const [pages, setPages] = useState<number[]>([]);
     const [startingPage, setStartingPage] = useState<number>();
     const [endingPage, setEndingPage] = useState<number>();
-    const [showEdges, setShowEdges] = useState<'start' | 'end' | 'both' | 'none'>('start');
+    const [showEdges, setShowEdges] = useState<'start' | 'end' | 'both' | 'none'>('none');
 
     useEffect(() => {
         if (paginatorProps?.totalCount && paginatorProps?.dataPerPage) {
@@ -42,12 +41,12 @@ export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem,
             setActivePage(1);
             setStartingPage(1);
             setPages([...Array(totalPages).keys()].map(i => i + 1));
-            if (totalPages <= 5) {
+            if (totalPages <= 6) {
                 setShowEdges('none');
                 setEndingPage(totalPages);
             } else {
                 setShowEdges('end');
-                setEndingPage(3);
+                setEndingPage(5);
             }
             paginatorProps?.whenPageMoved({
                 limit: paginatorProps?.dataPerPage,
@@ -57,24 +56,25 @@ export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem,
     }, [totalPages]);
 
     const whenPageMove = (active: number) => {
-        setActivePage(active);
-        paginationCheck(active);
-        paginatorProps?.whenPageMoved(
-            {
-                limit: paginatorProps?.dataPerPage,
-                offset: (active - 1) * paginatorProps?.dataPerPage,
-            });
-    }
+        if (totalPages) {
+            setActivePage(active);
+            paginationCheck(active);
+            paginatorProps?.whenPageMoved(
+                {
+                    limit: paginatorProps?.dataPerPage,
+                    offset: (active - 1) * paginatorProps?.dataPerPage,
+                });
+        }
+    };
     const paginationCheck = (active: number) => {
-        if (totalPages > 5) {
-            console.log(active);
-            if (active <= 3) {
+        if (totalPages && totalPages > 6) {
+            if (active <= 4) {
                 setShowEdges('end');
                 setStartingPage(1);
-                setEndingPage(3);
-            } else if (active >= totalPages - 2) {
+                setEndingPage(5);
+            } else if (active >= totalPages - 3) {
                 setShowEdges('start');
-                setStartingPage(totalPages - 2);
+                setStartingPage(totalPages - 4);
                 setEndingPage(totalPages);
             } else {
                 setShowEdges('both');
@@ -84,7 +84,7 @@ export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem,
         }
     };
     const moveForward = () => {
-        if (paginatorProps && activePage < (totalPages)) {
+        if (totalPages && (activePage < (totalPages))) {
             whenPageMove(activePage + 1);
         }
     };
@@ -104,7 +104,8 @@ export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem,
                         contentContainerStyle={listStyle}
                         horizontal={isHorizontal}
                         data={listData}
-                        renderItem={(props) => (renderItem(props))} />
+                        renderItem={(props) => (renderItem(props))}
+                    />
                     {
                         paginatorProps && listDirection === 'column' &&
                         <View style={{ ...style?.pageNavigateContainer, justifyContent: paginatorProps?.containerPostion }}>
@@ -113,9 +114,7 @@ export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem,
                                     disabled={isFirstPageActive}
                                     onPress={moveBackward}>
                                     <Icon name={'keyboard-arrow-left'}
-                                        style={style?.arrowIcon}
-                                        size={iconSize}
-                                        color={isFirstPageActive ? colors?.DARK_GRAY : colors?.BLACK} />
+                                        style={style?.arrowIcon} />
                                 </TouchableOpacity>
                                 {
                                     totalPages &&
@@ -179,8 +178,7 @@ export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem,
                                     disabled={isLastPageActive}>
                                     <Icon name={'keyboard-arrow-right'}
                                         style={style?.arrowIcon}
-                                        size={iconSize}
-                                        color={isLastPageActive ? colors?.DARK_GRAY : colors?.BLACK} />
+                                    />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -199,11 +197,11 @@ const style = StyleSheet.create({
         paddingVertical: 15,
         paddingHorizontal: 15,
         width: '100%',
+        gap: 10,
         backgroundColor: colors?.WHITE,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        gap: 10,
         borderRadius: 8,
         boxShadow: `0px 1px 1px 2px ${colors?.GRAY}`,
         position: 'absolute',
@@ -214,9 +212,11 @@ const style = StyleSheet.create({
         gap: 8,
     },
     arrowIcon: {
+        fontSize: 28,
+        padding: 2,
         borderRadius: 20,
-        borderColor: colors?.GRAY,
-        borderWidth: 2,
+        backgroundColor: colors?.BLUE,
+        color: colors?.WHITE,
     },
     navigatorBox: {
         borderRadius: 5,

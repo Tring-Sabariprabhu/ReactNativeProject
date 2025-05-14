@@ -162,7 +162,7 @@ export const SigninFormStyles = StyleSheet.create({
     },
     heading: {
         fontFamily: fonts?.MEDIUM,
-        color: colors?.DARK_BLUE,
+        color: colors?.BLUE,
         textAlign: 'center',
         fontSize: 35,
     },
@@ -179,7 +179,7 @@ export const SigninFormStyles = StyleSheet.create({
         ...styles?.button,
         borderRadius: 10,
         paddingVertical: 6,
-        backgroundColor: colors?.DARK_BLUE,
+        backgroundColor: colors?.BLUE,
     },
     buttonTextStyle: {
         color: colors?.WHITE,

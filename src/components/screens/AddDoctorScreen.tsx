@@ -10,7 +10,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { inputPatterns } from 'src/Validation/inputPatterns';
 import { inputTypes } from 'src/Assets/Enums/inputTypes';
-import { Picker } from '@react-native-picker/picker';
+// import { Picker } from '@react-native-picker/picker';
+import Picker from 'react-native-picker-select';
 import { ErrorMessage } from '../Custom/ErrorMessage';
 import { Days, DoctorSpecialists, Slots, UserGender } from 'src/MockDatabase/Enums/users';
 import { useEffect, useState } from 'react';
@@ -43,7 +44,6 @@ interface FormValues {
     email: string
     work_days: WorkDays
 }
-
 const DaySchema = yup
     .object()
     .shape({
@@ -76,7 +76,7 @@ const schema = yup
             friday: DaySchema,
             saturday: DaySchema,
             sunday: DaySchema,
-        }).required(),
+        }).required('Work days is Required'),
         email: yup.string()
             .trim()
             .required('Email is required')
@@ -114,8 +114,17 @@ export const AddDoctorScreen = () => {
     });
 
     useEffect(() => {
-        navigation?.addListener('blur', () => clearErrors());
+        navigation?.addListener('blur', () => {
+            clearErrors();
+            setDefaultValues();
+        });
     }, [navigation]);
+
+    const setDefaultValues = () => {
+        for (const [key, value] of Object.entries(defaultValues)) {
+            setValue(key as keyof FormValues, value);
+        }
+    };
 
     const addDoctorProcess = async () => {
         const doctor = getValues();
@@ -166,9 +175,7 @@ export const AddDoctorScreen = () => {
                         textBody: result,
                         type: ALERT_TYPE?.SUCCESS,
                     });
-                    for (const [key, value] of Object.entries(defaultValues)) {
-                        setValue(key as keyof FormValues, value);
-                    }
+                    setDefaultValues();
                     navigation?.navigate(privateScreens?.Doctors);
                 }
             }
@@ -220,47 +227,52 @@ export const AddDoctorScreen = () => {
                     />
                     <View>
                         <Picker
-                            style={styles?.dropDown}
-                            selectionColor={colors?.BLUE}
-                            selectedValue={getValues('doctor_gender')}
-                            mode={'dropdown'}
-                            onValueChange={(value) => {
-                                setValue('doctor_gender', value);
-                            }}>
-                            <Picker.Item label={'Male'}
-                                value={UserGender?.MALE}
-                                style={styles?.dropDownItem} />
-                            <Picker.Item label={'Female'}
-                                value={UserGender?.FEMALE}
-                                style={styles?.dropDownItem} />
-                        </Picker>
+                            pickerProps={{ mode: 'dropdown' }}
+                            value={getValues('doctor_gender')}
+                            style={{ viewContainer: styles?.dropDown }}
+                            dropdownItemStyle={styles?.dropDownItem}
+                            activeItemStyle={styles?.dropDownItem}
+                            onValueChange={(value) => setValue('doctor_gender', value)}
+                            items={[
+                                {
+                                    label: 'Male',
+                                    value: UserGender?.MALE,
+                                },
+                                {
+                                    label: 'Female',
+                                    value: UserGender?.FEMALE,
+                                }]}
+                        />
                         {errors?.doctor_gender?.message && <ErrorMessage message={errors?.doctor_gender?.message} />}
                     </View>
                     <View>
                         <Picker
-                            style={styles?.dropDown}
-                            selectedValue={getValues('speciality')}
-                            mode={'dropdown'}
-                            onValueChange={(value) => {
-                                setValue('speciality', value);
-                            }}>
-                            <Picker.Item label={'Cardiology'}
-                                value={DoctorSpecialists?.CARDIOLOGY}
-                                style={styles?.dropDownItem} />
-                            <Picker.Item label={'Dermatology'}
-                                value={DoctorSpecialists?.DERMATOLOGY}
-                                style={styles?.dropDownItem} />
-                        </Picker>
+                            pickerProps={{ mode: 'dropdown' }}
+                            value={getValues('speciality')}
+                            style={{ viewContainer: styles?.dropDown }}
+                            dropdownItemStyle={styles?.dropDownItem}
+                            activeItemStyle={styles?.dropDownItem}
+                            onValueChange={(value) => setValue('speciality', value)}
+                            items={[
+                                {
+                                    label: 'Cardiology',
+                                    value: DoctorSpecialists?.CARDIOLOGY,
+                                },
+                                {
+                                    label: 'Dermatology',
+                                    value: DoctorSpecialists?.DERMATOLOGY,
+                                }]}
+                        />
                         {errors?.speciality?.message && <ErrorMessage message={errors?.speciality?.message} />}
                     </View>
                     <View style={style?.workDaysContainer}>
                         {
                             Object.keys(getValues('work_days')).map((day) => (
-                                <View key={day} style={{ gap: 10 }} >
+                                <View key={day} style={style?.dayContainer}>
                                     <View >
                                         <Text style={style?.label}>{day}</Text>
                                     </View>
-                                    <View style={{ gap: 15 }}>
+                                    <View style={style?.dayContainer}>
                                         {
                                             Object.keys(getValues(`work_days.${day as keyof WorkDays}`)).map((slot, index) => (
                                                 <View key={index}>
@@ -274,7 +286,7 @@ export const AddDoctorScreen = () => {
                                                                 onChange={field?.onChange}
                                                                 textStyle={style?.content}
                                                                 iconSize={25}
-                                                                iconColor={colors?.DARK_BLUE} />
+                                                                iconColor={colors?.BLUE} />
                                                         )} />
                                                 </View>
                                             ))
@@ -328,5 +340,8 @@ const style = StyleSheet.create({
         fontSize: 17,
         fontFamily: fonts?.LIGHT,
         textTransform: 'capitalize',
+    },
+    dayContainer: {
+        gap: 10,
     },
 });

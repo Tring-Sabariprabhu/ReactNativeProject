@@ -44,14 +44,22 @@ export const styles = StyleSheet?.create({
         paddingHorizontal: 6,
     },
      dropDown: {
-       backgroundColor: colors?.GRAY,
-        // borderWidth: 5,
-        // borderColor: colors?.BLACK,
+       borderColor: colors?.GRAY,
+        borderWidth: 1,
+        borderRadius: 10,
+        // paddingHorizontal: 5,
     },
     dropDownItem: {
         fontFamily: fonts?.REGULAR,
         fontSize: 18,
-        padding: 10,
+        padding: 5,
     },
+    activeDropDownItem:{
+        color: colors?.BLUE,
+        // backgroundColor: colors?.BLUE,
+        fontFamily: fonts?.REGULAR,
+        fontSize: 18,
+        padding: 5,
+    }
 });
 

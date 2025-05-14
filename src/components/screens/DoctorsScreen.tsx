@@ -1,6 +1,5 @@
 import { Text, View } from 'react-native';
 import { styles } from 'src/Assets/Styles/global';
-import { style } from './PatientsScreen';
 import { getAllDoctors, getDoctorsCount } from 'src/MockDatabase/MockAPIs/users';
 import { useEffect, useState } from 'react';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
@@ -9,6 +8,8 @@ import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../Authentication/SigninScreen';
 import { ViewUser } from '../Custom/ViewUser';
 import { CustomList } from '../Custom/CustomList/CustomList';
+import { colors } from 'src/Assets/Enums/colors';
+import { style } from 'src/Assets/Styles/list';
 
 export const DoctorsScreen = () => {
     const navigation = useNavigation<NavigationProp>();
@@ -16,7 +17,7 @@ export const DoctorsScreen = () => {
     const [doctors, setDoctors] = useState<User[] | undefined>();
     const [selectedDoctor, setSelectedDoctor] = useState<User | undefined>();
     const [totalCount, setTotalCount] = useState(0);
-    const limit = 1;
+    const limit = 2;
 
     const refetch = () => {
         setTotalCount(getDoctorsCount());
@@ -52,14 +53,23 @@ export const DoctorsScreen = () => {
                         },
                     }}
                     renderItem={({ item: doctor }) => (
-                        <View style={style?.person}>
-                            <Text style={styles?.paragraph} onPress={() => {
-                                console.log(doctor);
-                                setSelectedDoctor(doctor);
-                                setShowPopup(true);
-                            }}>Doctor </Text>
-                            <Text style={style?.person_name}>{doctor?.user_name}</Text>
-                            <Text style={style?.person_name}>{doctor?.speciality}</Text>
+                        <View style={style?.listItem}
+                            key={doctor?.doctor_id}>
+                            <Text style={style?.listItemHeading}
+                                onPress={() => {
+                                    setSelectedDoctor(doctor);
+                                    setShowPopup(true);
+                                }}>
+                                    Doctor
+                            </Text>
+                            <Text style={style?.listItemContent}>
+                                {doctor?.user_name}
+                            </Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={[style?.listItemContent2]}>
+                                    {doctor?.speciality}
+                                </Text>
+                            </View>
                         </View>
                     )} />}
             <CustomPopup
@@ -75,5 +85,4 @@ export const DoctorsScreen = () => {
         </View>
     );
 };
-
 
