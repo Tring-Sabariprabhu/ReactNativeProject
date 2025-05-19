@@ -1,10 +1,14 @@
-import { ActivityIndicator } from 'react-native';
-import { colors } from 'src/Assets/Enums/colors';
+import { ActivityIndicator, ViewStyle } from 'react-native';
+import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
 
-
-export const Loader = () => (
+interface LoaderProps {
+    style?: ViewStyle
+    color?: string
+    size?: number
+}
+export const Loader = ({ style, color, size }: LoaderProps) => (
     <ActivityIndicator
-        size={'large'}
-        color={colors?.BLUE}
-        style={{flex: 1}} />
+        size={size ? size : 'large'}
+        color={color ? color : PRIMARY_COLOR}
+        style={[{ flex: 1 }, style]} />
 );

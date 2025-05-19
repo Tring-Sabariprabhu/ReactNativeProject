@@ -3,22 +3,19 @@ import { UserRole, UserGender, DoctorSpecialists, Days, Slots } from '../Enums/u
 export interface User extends Doctor {
     user_id: string
     user_name: string
-    user_role: UserRole
+    user_role: string
     user_age: number
-    user_gender: UserGender
+    user_gender: string
     email: string
     password: string
+    telphone: string
 }
 
 export interface Doctor{
-    speciality?: DoctorSpecialists,
+    speciality?: string,
     work_days?: Days[]
-    doctor_id?: string
-}
-export interface SlotTimings {
-    day?: Days,
-    slot?: Slots,
-    status?: 'Available' | 'Notavailable',
+    inTime?: Date
+    outTime?: Date
     doctor_id?: string
 }
 

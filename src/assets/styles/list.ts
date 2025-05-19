@@ -5,13 +5,14 @@ import { styles } from './global';
 
 export const style = StyleSheet.create({
     screen: {
-        ...styles?.screen,
+        flex: 1,
         backgroundColor: colors?.WHITE,
-        gap: 20,
-        padding: 20,
     },
     listContainer: {
-        gap: 20,
+        backgroundColor: colors?.WHITE,
+        paddingVertical: 20,
+        paddingHorizontal: 15,
+        gap: 50,
     },
     showPatientContainer: {
         paddingLeft: 10,
@@ -28,26 +29,52 @@ export const style = StyleSheet.create({
     },
     listItem: {
         ...styles?.paragraph,
-        paddingVertical: 20,
         paddingHorizontal: 30,
         borderRadius: 10,
-        borderWidth: 2,
+        flexDirection: 'row',
+        boxShadow: `0px 2px 5px 2px ${colors?.GRAY}`,
         borderColor: colors?.LIGHT_GRAY,
         backgroundColor: colors?.WHITE,
     },
     listItemHeading: {
-        fontSize: 22,
+        fontSize: 20,
         fontFamily: fonts?.MEDIUM,
-        color: colors?.BLUE,
     },
     listItemContent: {
         textTransform: 'capitalize',
-        fontSize: 20,
+        fontSize: 18,
         fontFamily: fonts?.REGULAR,
     },
     listItemContent2: {
         textTransform: 'capitalize',
-        fontSize: 16,
+        fontSize: 15,
         fontFamily: fonts?.LIGHT,
+    },
+    contentView:{
+        flex: 3,
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        paddingVertical: 10,
+    },
+    view:{
+        flexDirection: 'row',
+        gap: 5,
+        width: '100%',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
+    imageView: {
+        flex: 4,
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        paddingVertical: 5,
+    },
+    image: {
+        width: 90,
+        height: 90,
+        opacity: 0.15,
+    },
+    icon: {
+        opacity: 0.3,
     },
 });

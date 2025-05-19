@@ -1,8 +1,8 @@
-import { View, ScrollView, StyleSheet, Text } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { CustomTextInput } from '../Custom/CustomTextInput';
 import { Controller, useForm } from 'react-hook-form';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
-import { NavigationProp, SigninFormStyles } from '../Authentication/SigninScreen';
+import { NavigationProp, style as formStyles } from '../Authentication/SigninScreen';
 import { addDoctor } from 'src/MockDatabase/MockAPIs/users';
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
@@ -10,46 +10,44 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { inputPatterns } from 'src/Validation/inputPatterns';
 import { inputTypes } from 'src/Assets/Enums/inputTypes';
-// import { Picker } from '@react-native-picker/picker';
-import Picker from 'react-native-picker-select';
-import { ErrorMessage } from '../Custom/ErrorMessage';
 import { Days, DoctorSpecialists, Slots, UserGender } from 'src/MockDatabase/Enums/users';
 import { useEffect, useState } from 'react';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
 import { styles } from 'src/Assets/Styles/global';
 import { CustomCheckbox } from '../Custom/CustomCheckbox';
-import { colors } from 'src/Assets/Enums/colors';
+import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
 import { SlotTimings } from 'src/MockDatabase/Types/Types';
 import { useNavigation } from '@react-navigation/native';
 import { privateScreens } from 'src/Assets/Enums/screens';
 import { fonts } from 'src/Assets/Fonts';
-interface DaySlots {
-    slot1: boolean
-    slot2: boolean
-}
+import { SelectInput } from '../Custom/SelectInput';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import moment from 'moment';
+import { ErrorMessage } from '../Custom/ErrorMessage';
+
+
 interface WorkDays {
-    monday: DaySlots;
-    tuesday: DaySlots;
-    wednesday: DaySlots;
-    thursday: DaySlots;
-    friday: DaySlots;
-    saturday: DaySlots;
-    sunday: DaySlots;
+    monday: boolean;
+    tuesday: boolean;
+    wednesday: boolean;
+    thursday: boolean;
+    friday: boolean;
+    saturday: boolean;
+    sunday: boolean;
 }
 interface FormValues {
-    doctor_name: string
-    doctor_age: number
-    doctor_gender: UserGender
-    speciality: DoctorSpecialists
-    email: string
-    work_days: WorkDays
+    doctor_name: string;
+    doctor_age: number;
+    doctor_gender: string;
+    speciality: string;
+    email: string;
+    telphone: string;
+    inTime: Date;
+    outTime: Date;
+    work_days: WorkDays;
 }
-const DaySchema = yup
-    .object()
-    .shape({
-        slot1: yup.boolean().required(),
-        slot2: yup.boolean().required(),
-    }).required();
+
 const schema = yup
     .object()
     .shape({
@@ -64,19 +62,32 @@ const schema = yup
             .max(90, 'Age is too large'),
         doctor_gender: yup.string()
             .required('Gender is required')
-            .oneOf([UserGender?.MALE, UserGender?.FEMALE], 'Gender should be Male or Female'),
+            .oneOf([UserGender?.MALE, UserGender?.FEMALE], 'Choose valid Gender'),
+        telphone: yup.string()
+            .min(10, 'Mobile number should be valid')
+            .required('Mobile number is required'),
         speciality: yup.string()
             .required('Speciality is required')
             .oneOf([DoctorSpecialists?.CARDIOLOGY, DoctorSpecialists?.DERMATOLOGY], 'Choose valid Speciality'),
+        inTime: yup.date()
+            .typeError('In Time should be valid')
+            .required('In Time is required'),
+        outTime: yup.date()
+            .typeError('Out Time should be valid')
+            .required('Out Time is required'),
         work_days: yup.object().shape({
-            monday: DaySchema,
-            tuesday: DaySchema,
-            wednesday: DaySchema,
-            thursday: DaySchema,
-            friday: DaySchema,
-            saturday: DaySchema,
-            sunday: DaySchema,
-        }).required('Work days is Required'),
+            monday: yup.boolean().required(),
+            tuesday: yup.boolean().required(),
+            wednesday: yup.boolean().required(),
+            thursday: yup.boolean().required(),
+            friday: yup.boolean().required(),
+            saturday: yup.boolean().required(),
+            sunday: yup.boolean().required(),
+        }).required('Work days is Required')
+            .test('At least 2 days', 'Select atleast 2 Work days', (value) => {
+                const count = (Object.values(value).filter(Boolean)).length;
+                return count >= 2;
+            }),
         email: yup.string()
             .trim()
             .required('Email is required')
@@ -85,31 +96,32 @@ const schema = yup
 export const AddDoctorScreen = () => {
     const navigation = useNavigation<NavigationProp>();
     const [confirmPopup, setConfirmPopup] = useState(false);
+    const [inTimePicker, setInTimePicker] = useState(false);
+    const [outTimePicker, setOutTimePicker] = useState(false);
 
-    const defaultDay = {
-        slot1: false,
-        slot2: false,
-    };
-    const defaultValues = {
+    const defaultFormValues = {
         doctor_name: '',
         doctor_age: 0,
-        doctor_gender: UserGender?.MALE,
-        speciality: DoctorSpecialists?.CARDIOLOGY,
+        doctor_gender: '',
+        speciality: '',
         email: '',
+        telphone: '',
+        inTime: '',
+        outTime: '',
         work_days: {
-            monday: defaultDay,
-            tuesday: defaultDay,
-            wednesday: defaultDay,
-            thursday: defaultDay,
-            friday: defaultDay,
-            saturday: defaultDay,
-            sunday: defaultDay,
+            monday: false,
+            tuesday: false,
+            wednesday: false,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
         },
     };
 
-    const { control, handleSubmit, formState: { errors }, setValue, getValues, clearErrors } = useForm({
+    const { control, handleSubmit, formState: { errors }, setValue, getValues, clearErrors, watch } = useForm({
         shouldUnregister: false,
-        defaultValues: defaultValues,
+        defaultValues: defaultFormValues,
         resolver: yupResolver(schema),
     });
 
@@ -121,7 +133,7 @@ export const AddDoctorScreen = () => {
     }, [navigation]);
 
     const setDefaultValues = () => {
-        for (const [key, value] of Object.entries(defaultValues)) {
+        for (const [key, value] of Object.entries(defaultFormValues)) {
             setValue(key as keyof FormValues, value);
         }
     };
@@ -135,28 +147,17 @@ export const AddDoctorScreen = () => {
                     doctor_name,
                     doctor_age,
                     doctor_gender,
+                    telphone,
                     speciality,
+                    inTime,
+                    outTime,
                 } = doctor;
-                const slotTimings: SlotTimings[] = [];
                 const work_days: Days[] = [];
-
-                for (const dayKey in doctor?.work_days) {
-                    const daySlots = Object.entries(doctor?.work_days[dayKey as keyof WorkDays]);
-                    let atleastOneSlotSelected = false;
-                    for (const [key, value] of daySlots) {
-                        if (value) {
-                            atleastOneSlotSelected = true;
-                            slotTimings.push({
-                                day: Days[dayKey as keyof WorkDays],
-                                slot: Slots[key as keyof DaySlots],
-                                status: 'Available',
-                            });
-                        }
+                Object.keys(doctor.work_days).map((day) => {
+                    if (doctor.work_days[day as keyof WorkDays]) {
+                        work_days.push(Days[day as keyof WorkDays]);
                     }
-                    if (atleastOneSlotSelected) {
-                        work_days.push(Days[dayKey as keyof WorkDays]);
-                    }
-                }
+                });
                 const result = addDoctor(
                     {
                         email: email?.trim()?.toLowerCase(),
@@ -164,8 +165,10 @@ export const AddDoctorScreen = () => {
                         doctor_age,
                         doctor_gender,
                         speciality,
+                        telphone,
                         work_days,
-                        slotTimings,
+                        inTime,
+                        outTime,
                     });
                 if (result) {
                     Toast?.show({
@@ -176,7 +179,7 @@ export const AddDoctorScreen = () => {
                         type: ALERT_TYPE?.SUCCESS,
                     });
                     setDefaultValues();
-                    navigation?.navigate(privateScreens?.Doctors);
+                    // navigation?.navigate(privateScreens?.Doctors);
                 }
             }
             catch (err) {
@@ -197,110 +200,199 @@ export const AddDoctorScreen = () => {
         setConfirmPopup(true);
     };
 
+    const getTime = (time: Date) => {
+        const momentTIme = moment(time);
+        return momentTIme.get('hour') + ':' + momentTIme.get('minute');
+    };
+    const setTimeValue = (formValue: 'inTime' | 'outTime', value: Date) => {
+        const minutesCheck = () => {
+            const minutes = moment(value).get('minute');
+            if (minutes === 30 || minutes === 0) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+        if (formValue === 'inTime') {
+            if (minutesCheck()) {
+                setValue(formValue, value);
+            } else {
+                Toast.show({
+                    ...toastStyle,
+                    type: ALERT_TYPE?.DANGER,
+                    textBody: 'Set minutes 00 or 30',
+                });
+            }
+            setInTimePicker(false);
+        } else {
+            setOutTimePicker(false);
+            const inTime = watch('inTime');
+            if (inTime && moment(value).isAfter(inTime)) {
+                if (minutesCheck()) {
+                    setValue(formValue, value);
+                } else {
+                    Toast.show({
+                        ...toastStyle,
+                        type: ALERT_TYPE?.DANGER,
+                        textBody: 'Set minutes 00 or 30',
+                    });
+                }
+            } else {
+                Toast.show({
+                    ...toastStyle,
+                    type: ALERT_TYPE?.DANGER,
+                    textBody: 'Select valid Out time',
+                });
+            }
+        }
+    };
     return (
         <ScrollView>
             <View style={style?.screen}>
                 <View style={style?.container}>
                     <CustomTextInput
+                        label={'Doctor name'}
+                        labelStyle={style?.label}
+                        required
+                        placeholder={'Enter doctor name'}
                         name={'doctor_name'}
                         control={control}
-                        placeholder={'Doctor name'}
-                        style={SigninFormStyles?.textInput}
+                        inputStyle={formStyles?.textInput}
                         keyboardType={'default'}
                         errMessage={errors?.doctor_name?.message}
                     />
                     <CustomTextInput
+                        label={'Doctor email'}
+                        labelStyle={style?.label}
+                        required
+                        placeholder={'Enter doctor email'}
                         name={'email'}
                         control={control}
-                        placeholder={'Doctor email'}
-                        style={SigninFormStyles?.textInput}
+                        inputStyle={formStyles?.textInput}
                         keyboardType={'email-address'}
                         errMessage={errors?.email?.message}
                     />
                     <CustomTextInput
+                        label={'Doctor age'}
+                        labelStyle={style?.label}
+                        required
+                        placeholder={'Enter doctor age'}
                         name={'doctor_age'}
                         control={control}
-                        placeholder={'Doctor age'}
-                        style={SigninFormStyles?.textInput}
+                        inputStyle={formStyles?.textInput}
                         keyboardType={'numeric'}
                         errMessage={errors?.doctor_age?.message}
                     />
+                    <SelectInput
+                        label={'Gender'}
+                        labelStyle={style?.label}
+                        required
+                        placeHolder={'Select Gender'}
+                        name={'doctor_gender'}
+                        control={control}
+                        items={[
+                            {
+                                label: 'Male',
+                                value: UserGender?.MALE,
+                            },
+                            {
+                                label: 'Female',
+                                value: UserGender?.FEMALE,
+                            }]}
+                        errorMessage={errors?.doctor_gender?.message}
+                    />
+                    <CustomTextInput
+                        required
+                        label={'Mobile number'}
+                        labelStyle={style?.label}
+                        placeholder={'Enter mobile number'}
+                        inputStyle={formStyles?.textInput}
+                        keyboardType={'numeric'}
+                        control={control}
+                        name={'telphone'}
+                        maxLength={10}
+                        errMessage={errors?.telphone?.message}
+                    />
+                    <SelectInput
+                        label={'Speciality'}
+                        labelStyle={style?.label}
+                        required
+                        placeHolder={'Select Speciality'}
+                        name={'speciality'}
+                        control={control}
+                        items={[
+                            {
+                                label: 'Cardiology',
+                                value: DoctorSpecialists?.CARDIOLOGY,
+                            },
+                            {
+                                label: 'Dermatology',
+                                value: DoctorSpecialists?.DERMATOLOGY,
+                            }]}
+                        errorMessage={errors?.speciality?.message}
+                    />
                     <View>
-                        <Picker
-                            pickerProps={{ mode: 'dropdown' }}
-                            value={getValues('doctor_gender')}
-                            style={{ viewContainer: styles?.dropDown }}
-                            dropdownItemStyle={styles?.dropDownItem}
-                            activeItemStyle={styles?.dropDownItem}
-                            onValueChange={(value) => setValue('doctor_gender', value)}
-                            items={[
-                                {
-                                    label: 'Male',
-                                    value: UserGender?.MALE,
-                                },
-                                {
-                                    label: 'Female',
-                                    value: UserGender?.FEMALE,
-                                }]}
-                        />
-                        {errors?.doctor_gender?.message && <ErrorMessage message={errors?.doctor_gender?.message} />}
-                    </View>
-                    <View>
-                        <Picker
-                            pickerProps={{ mode: 'dropdown' }}
-                            value={getValues('speciality')}
-                            style={{ viewContainer: styles?.dropDown }}
-                            dropdownItemStyle={styles?.dropDownItem}
-                            activeItemStyle={styles?.dropDownItem}
-                            onValueChange={(value) => setValue('speciality', value)}
-                            items={[
-                                {
-                                    label: 'Cardiology',
-                                    value: DoctorSpecialists?.CARDIOLOGY,
-                                },
-                                {
-                                    label: 'Dermatology',
-                                    value: DoctorSpecialists?.DERMATOLOGY,
-                                }]}
-                        />
-                        {errors?.speciality?.message && <ErrorMessage message={errors?.speciality?.message} />}
+                        <Text style={style?.label}>
+                            Work Time
+                            <Text style={{ color: colors?.RED }}>*</Text>
+                        </Text>
+                        <View style={{ padding: 10, gap: 10 }}>
+                            <View>
+                                <Text style={{ ...style?.content, textDecorationLine: 'underline' }} onPress={() => setInTimePicker(true)}>
+                                    choose In time
+                                </Text>
+                                <Text style={style?.content}>
+                                    {watch('inTime') ? getTime(watch('inTime')) : '00:00'}
+                                </Text>
+                                {errors?.inTime?.message &&
+                                    <ErrorMessage
+                                        message={errors?.inTime?.message} />}
+                            </View>
+                            <View>
+                                <Text style={{ ...style?.content, textDecorationLine: 'underline' }} onPress={() => setOutTimePicker(true)}>
+                                    choose Out time
+                                </Text>
+                                <Text style={style?.content}>
+                                    {watch('outTime') ? getTime(watch('outTime')) : '00:00'}
+                                </Text>
+                                {errors?.outTime?.message &&
+                                    <ErrorMessage
+                                        message={errors?.outTime?.message} />}
+                            </View>
+                        </View>
                     </View>
                     <View style={style?.workDaysContainer}>
+                        <View style={style?.headingContainer}>
+                            <Text style={style?.label}>
+                                Work days
+                                <Text style={{ color: colors?.RED }}>*</Text>
+                            </Text>
+                        </View>
                         {
                             Object.keys(getValues('work_days')).map((day) => (
-                                <View key={day} style={style?.dayContainer}>
-                                    <View >
-                                        <Text style={style?.label}>{day}</Text>
-                                    </View>
-                                    <View style={style?.dayContainer}>
-                                        {
-                                            Object.keys(getValues(`work_days.${day as keyof WorkDays}`)).map((slot, index) => (
-                                                <View key={index}>
-                                                    <Controller
-                                                        name={`work_days.${day as keyof WorkDays}.${slot as keyof DaySlots}`}
-                                                        control={control}
-                                                        render={({ field }) => (
-                                                            <CustomCheckbox
-                                                                text={Slots[slot as keyof DaySlots]}
-                                                                isChecked={field?.value}
-                                                                onChange={field?.onChange}
-                                                                textStyle={style?.content}
-                                                                iconSize={25}
-                                                                iconColor={colors?.BLUE} />
-                                                        )} />
-                                                </View>
-                                            ))
-                                        }
-                                    </View>
-                                </View>
+                                <Controller
+                                    key={day}
+                                    name={`work_days.${day as keyof WorkDays}`}
+                                    control={control}
+                                    render={({ field }) => (
+                                        <CustomCheckbox
+                                            text={day}
+                                            iconSize={23}
+                                            iconColor={PRIMARY_COLOR}
+                                            textStyle={style?.content}
+                                            isChecked={field?.value}
+                                            onChange={field?.onChange} />
+                                    )} />
                             ))
                         }
+                        {errors?.work_days?.message &&
+                            <ErrorMessage message={errors?.work_days?.message} />}
                     </View>
                     <CustomButton
                         type={CustomButtonTypes.OPASITYBUTTON}
-                        title={'Add'}
-                        buttonStyle={SigninFormStyles?.button}
-                        textStyle={SigninFormStyles?.buttonTextStyle}
+                        title={'Submit'}
+                        buttonStyle={formStyles?.button}
+                        textStyle={formStyles?.buttonTextStyle}
                         onPress={handleSubmit(onSubmit)}
                     />
                 </View>
@@ -314,8 +406,22 @@ export const AddDoctorScreen = () => {
                     onSuccess={addDoctorProcess}
                     buttonStyle={styles?.popupButton}
                     buttonTextStyle={styles?.popupButtonText} />
+                <DateTimePicker
+                    isVisible={inTimePicker}
+                    mode={'time'}
+                    onConfirm={(value) => {
+                        setTimeValue('inTime', value);
+                    }}
+                    onCancel={() => setInTimePicker(false)} />
+                <DateTimePicker
+                    isVisible={outTimePicker}
+                    mode={'time'}
+                    onConfirm={(value) => {
+                        setTimeValue('outTime', value);
+                    }}
+                    onCancel={() => setOutTimePicker(false)} />
             </View>
-        </ScrollView>
+        </ScrollView >
     );
 };
 
@@ -324,24 +430,49 @@ const style = StyleSheet.create({
         ...styles?.screen,
         backgroundColor: colors?.WHITE,
     },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     container: {
+        paddingVertical: 20,
         paddingHorizontal: 10,
         gap: 40,
     },
     workDaysContainer: {
         gap: 30,
     },
+    headingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 20,
+    },
     label: {
         fontFamily: fonts?.REGULAR,
-        fontSize: 18,
+        fontSize: 16,
         textTransform: 'capitalize',
     },
     content: {
-        fontSize: 17,
+        fontSize: 15,
         fontFamily: fonts?.LIGHT,
         textTransform: 'capitalize',
     },
     dayContainer: {
+        paddingStart: 15,
         gap: 10,
+    },
+    smallDropDown: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 5,
+        paddingHorizontal: 10,
+        borderColor: colors?.GRAY,
+        borderRadius: 5,
+        borderWidth: 2,
+    },
+    smallDropDownText: {
+        fontSize: 13,
+        fontFamily: fonts?.LIGHT,
     },
 });

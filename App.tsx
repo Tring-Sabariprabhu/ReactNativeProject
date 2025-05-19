@@ -27,11 +27,18 @@ import { KeyboardAvoidingView } from 'react-native';
 import UserInactivity from 'react-native-user-inactivity';
 import { CustomPopup, CustomPopupTypes } from 'src/Components/Custom/CustomPopup/CustomPopup';
 import { styles } from 'src/Assets/Styles/global';
+import SplashScreen from 'react-native-splash-screen';
+import { colors } from 'src/Assets/Enums/colors';
 
 function App(): React.JSX.Element {
   const [token, setToken] = useState<string | null>();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const user = useSelector((state: RootState) => state?.user);
+
+  useEffect(()=>{
+    SplashScreen.hide();
+    setLoading(true);
+  },[]);
 
   const fetchToken = () => {
     setLoading(true);
@@ -48,13 +55,14 @@ function App(): React.JSX.Element {
     fetchToken();
   }, [user]);
 
+
   const [active, setActive] = useState(true);
-  const [timer, setTimer] = useState(100000);
+  const timer = 100000;
   const [showPopup, setShowPopup] = useState(false);
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 , backgroundColor: colors?.WHITE}}>
         <KeyboardAvoidingView
           behavior={'height'}
           style={{ flex: 1 }}>
@@ -72,7 +80,7 @@ function App(): React.JSX.Element {
             />
             {
               loading ?
-                <Loader /> :
+                <Loader  size={60}/> :
                 (showPopup ?
                   <View >
                     <CustomPopup

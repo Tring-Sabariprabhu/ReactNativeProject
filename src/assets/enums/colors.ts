@@ -9,3 +9,5 @@ export enum colors {
     DARK_GRAY = '#DFD0B8',
     BLACK = '#000000',
 }
+
+export const PRIMARY_COLOR = colors?.DARK_BLUE;

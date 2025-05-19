@@ -3,7 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fonts } from 'src/Assets/Fonts';
 import { RootState } from 'src/Redux/store';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { colors } from 'src/Assets/Enums/colors';
 import { useEffect } from 'react';
 import { getCurrentUser } from 'src/MockDatabase/MockAPIs/auth';
@@ -17,10 +18,16 @@ interface DrawerIconProps {
     color: string
     size: number
     iconName: string
+    iconFamily: 'MaterialIcons' | 'FontAwesome'
 }
-const DrawerIcon = ({ color, size, iconName }: DrawerIconProps) => (
-    <Icon name={iconName} color={color} size={size} />
-);
+const DrawerIcon = ({ color, size, iconName, iconFamily }: DrawerIconProps) => {
+    switch(iconFamily){
+        case 'MaterialIcons':
+            return <MaterialIcon name={iconName} color={color} size={size}/>;
+        case 'FontAwesome':
+            return <FontAwesomeIcon name={iconName} color={color} size={size}/>;
+    }
+};
 
 
 export const DashBaordLayout = () => {
@@ -70,10 +77,9 @@ export const DashBaordLayout = () => {
                     component={HomeScreen}
                     options={
                         {
-                            headerTitle: 'Dashboard',
                             title: 'Dashboard',
                             drawerIcon: (props) => (
-                                <DrawerIcon {...props} iconName={'home'} />
+                                <DrawerIcon {...props} iconName={'home'} iconFamily={'MaterialIcons'}/>
                             ),
                         }
                     } />
@@ -87,7 +93,7 @@ export const DashBaordLayout = () => {
                                 {
                                     ...screen?.options,
                                     drawerIcon: (props) => (
-                                        <DrawerIcon {...props} iconName={screen?.iconName} key={index} />
+                                        <DrawerIcon {...props} iconName={screen?.iconName} key={index} iconFamily={screen?.iconFamily} />
                                     ),
                                 }
                             } />

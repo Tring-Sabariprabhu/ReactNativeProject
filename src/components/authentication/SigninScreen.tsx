@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import logo from '../../Assets/Images/galaxy_logo.png';
-import {  CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
+import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CustomTextInput } from '../Custom/CustomTextInput';
@@ -15,9 +15,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { inputPatterns } from 'src/Validation/inputPatterns';
 import { inputTypes } from 'src/Assets/Enums/inputTypes';
-import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
+import { toastStyle } from 'src/Assets/Styles/toast';
 import { styles } from 'src/Assets/Styles/global';
-import { colors } from 'src/Assets/Enums/colors';
+import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
+import { useState } from 'react';
 
 type RootStackParamList = {
     Signin: undefined;
@@ -30,8 +31,8 @@ type RootStackParamList = {
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface FormValues {
-    email: string,
-    password: string
+    email: string;
+    password: string;
 }
 const schema = yup
     .object()
@@ -49,7 +50,7 @@ export const SigninScreen = () => {
     const navigation = useNavigation<NavigationProp>();
     const dispatch = useDispatch();
 
-    const { control, handleSubmit, formState: { errors } } = useForm({
+    const { control, handleSubmit, formState: { errors }, watch, setError } = useForm<FormValues>({
         defaultValues: {
             email: '',
             password: '',
@@ -58,8 +59,11 @@ export const SigninScreen = () => {
     });
     const onSubmit = async (formdata: FormValues) => {
         try {
-            const data = signin({ email: formdata?.email?.toLowerCase(), password: formdata?.password });
-            if(data?.user_id){
+            setDisableMode(true);
+            const { email, password } = formdata;
+            const data = signin({ email: email?.toLowerCase(), password: password });
+            setDisableMode(false);
+            if (data?.user_id) {
                 await AsyncStorage.setItem('token', data?.user_id);
             }
             const user = await getCurrentUser();
@@ -73,83 +77,101 @@ export const SigninScreen = () => {
                     email: user?.email,
                     refetchToken: true,
                 }));
-                Toast.show({
-                    ...toastStyle,
-                    ...toastLengthShort,
-                    type: ALERT_TYPE.SUCCESS,
-                    title: 'Success',
-                    textBody: 'Logged In Successfully',
-                });
             }, 1000);
         }
         catch (err) {
+            setDisableMode(false);
             if (err instanceof Error) {
-                Toast.show({
-                    ...toastStyle,
-                    type: ALERT_TYPE.DANGER,
-                    title: 'Logging failed',
-                    textBody: err?.message,
-                });
+                const message = err?.message?.toLowerCase();
+                if (message?.includes('user not found')) {
+                    setError('email', { message: err?.message });
+                } else if (message?.includes('password incorrect')) {
+                    setError('password', { message: err?.message });
+                } else {
+                    Toast.show({
+                        ...toastStyle,
+                        type: ALERT_TYPE.DANGER,
+                        textBody: err?.message,
+                    });
+                }
             }
         }
     };
-
+    const [disableMode, setDisableMode] = useState(false);
     return (
-        <View style={SigninFormStyles?.screen}>
-            <View style={SigninFormStyles.imageContainer}>
-                <Image source={logo} style={SigninFormStyles?.image} />
-            </View>
-            <View style={SigninFormStyles?.container}>
-                <Text style={SigninFormStyles?.heading}>Sign in</Text>
-                <View style={SigninFormStyles?.inputContainer}>
+        <View style={style?.screen}>
+            <View style={style?.container}>
+                <View style={style.imageContainer}>
+                    <Image source={logo} style={style?.image} />
+                </View>
+                <View style={style?.formContainer}>
+                    <View style={style?.headingContainer}>
+                        <Text style={style?.heading}>
+                            Let's Sign you in.
+                        </Text>
+                        <Text style={style?.content}>
+                            Please Sign in to continue
+                        </Text>
+                    </View>
                     <CustomTextInput
-                        placeholder={'Email'}
-                        style={SigninFormStyles?.textInput}
+                        required
+                        placeholder={'Enter email'}
+                        inputStyle={style?.textInput}
+                        label={'Email'}
+                        labelStyle={style?.label}
                         keyboardType={'email-address'}
                         control={control}
                         name={'email'}
+                        value={watch('email')}
                         errMessage={errors?.email?.message}
                     />
                     <CustomTextInput
-                        placeholder={'Password'}
-                        style={SigninFormStyles?.textInput}
+                        required
+                        isSecureInput
+                        placeholder={'Enter password'}
+                        inputStyle={style?.textInput}
+                        label={'Password'}
+                        labelStyle={style?.label}
                         keyboardType={'default'}
                         control={control}
                         name={'password'}
+                        value={watch('password')}
                         errMessage={errors?.password?.message}
                     />
-                </View>
-                <CustomButton
-                    type={CustomButtonTypes?.OPASITYBUTTON}
-                    title={'Sign in'}
-                    buttonStyle={SigninFormStyles?.button}
-                    textStyle={SigninFormStyles?.buttonTextStyle}
-                    onPress={handleSubmit(onSubmit)}
+                    <CustomButton
+                        disableMode={disableMode}
+                        type={CustomButtonTypes?.OPASITYBUTTON}
+                        title={'Sign in'}
+                        buttonStyle={style?.button}
+                        textStyle={style?.buttonTextStyle}
+                        onPress={handleSubmit(onSubmit)}
                     />
-                <View style={SigninFormStyles?.footer}>
-                    <Text style={styles?.paragraph}>
-                        Don't have an Account?
-                    </Text>
-                    <TouchableOpacity onPress={() => navigation?.navigate('Signup')}>
-                        <Text style={SigninFormStyles?.navigator}>
-                            Sign up
+                    <View style={style?.footer}>
+                        <Text style={style?.footerText}>
+                            Don't have an Account?
                         </Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation?.navigate('Signup')} disabled={disableMode}>
+                            <Text style={style?.navigator}>
+                                Register
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
+
             </View>
         </View>
     );
 };
 
-export const SigninFormStyles = StyleSheet.create({
+export const style = StyleSheet.create({
     screen: {
         ...styles?.screen,
         backgroundColor: colors?.WHITE,
         paddingHorizontal: 40,
-        gap: 100,
+        paddingVertical: 80,
     },
     imageContainer: {
-        justifyContent: 'center',
+        // justifyContent: 'center',
         alignItems: 'center',
     },
     image: {
@@ -157,29 +179,50 @@ export const SigninFormStyles = StyleSheet.create({
         height: 150,
     },
     container: {
+        flex: 1,
+        // justifyContent: 'center',
         paddingTop: 10,
-        gap: 30,
+        gap: 40,
+    },
+    formContainer: {
+        gap: 20,
+    },
+    headingContainer: {
+        paddingVertical: 5,
     },
     heading: {
         fontFamily: fonts?.MEDIUM,
-        color: colors?.BLUE,
-        textAlign: 'center',
-        fontSize: 35,
+        color: PRIMARY_COLOR,
+        opacity: 0.8,
+        textAlign: 'left',
+        fontSize: 28,
+    },
+    content: {
+        paddingStart: 5,
+        fontFamily: fonts?.LIGHT,
+        opacity: 0.5,
+        fontSize: 12,
     },
     inputContainer: {
-        gap: 20,
+        gap: 10,
     },
     textInput: {
         ...styles?.textInput,
-        fontSize: 18,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
+        fontSize: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 15,
+    },
+    label: {
+        ...styles?.label,
+        fontSize: 16,
+        paddingStart: 10,
+        opacity: 0.7,
     },
     button: {
         ...styles?.button,
-        borderRadius: 10,
+        borderRadius: 8,
         paddingVertical: 6,
-        backgroundColor: colors?.BLUE,
+        backgroundColor: PRIMARY_COLOR,
     },
     buttonTextStyle: {
         color: colors?.WHITE,
@@ -194,9 +237,14 @@ export const SigninFormStyles = StyleSheet.create({
         justifyContent: 'center',
         gap: 10,
     },
+    footerText: {
+        fontFamily: fonts?.REGULAR,
+        fontSize: 16,
+        opacity: 0.6,
+    },
     navigator: {
-        fontFamily: fonts?.MEDIUM,
-        fontSize: 22,
+        fontFamily: fonts?.REGULAR,
+        fontSize: 18,
         color: colors?.DARK_BLUE,
     },
 });

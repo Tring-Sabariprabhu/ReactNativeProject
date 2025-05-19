@@ -8,10 +8,13 @@ export const styles = StyleSheet?.create({
         padding: StatusBar?.currentHeight,
     },
     textInput: {
-        fontFamily: fonts?.REGULAR,
-        borderColor: colors?.GRAY,
-        borderWidth: 2,
-        borderRadius: 10,
+        fontFamily: fonts?.LIGHT,
+        boxShadow: `1px 1px 2px 1px ${colors?.LIGHT_GRAY}`,
+        borderRadius: 8,
+    },
+    label: {
+        fontFamily: fonts?.LIGHT,
+        color: colors?.BLACK,
     },
     paragraph: {
         fontFamily: fonts?.LIGHT,
@@ -28,12 +31,13 @@ export const styles = StyleSheet?.create({
     },
     error: {
         color: colors?.RED,
-        paddingTop: 10,
+        paddingStart: 10,
         fontFamily: fonts?.LIGHT,
         fontSize: 14,
     },
     button: {
         fontFamily: fonts?.MEDIUM,
+        // opacity: 0.9,
     },
     popupButton: {
         padding: 3,
@@ -44,22 +48,19 @@ export const styles = StyleSheet?.create({
         paddingHorizontal: 6,
     },
      dropDown: {
-       borderColor: colors?.GRAY,
-        borderWidth: 1,
-        borderRadius: 10,
-        // paddingHorizontal: 5,
+        boxShadow: `1px 1px 2px 1px ${colors?.LIGHT_GRAY}`,
+        borderRadius: 8,
     },
     dropDownItem: {
         fontFamily: fonts?.REGULAR,
-        fontSize: 18,
+        fontSize: 15,
         padding: 5,
     },
     activeDropDownItem:{
         color: colors?.BLUE,
-        // backgroundColor: colors?.BLUE,
         fontFamily: fonts?.REGULAR,
         fontSize: 18,
         padding: 5,
-    }
+    },
 });
 

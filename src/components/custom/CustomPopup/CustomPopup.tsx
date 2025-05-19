@@ -4,7 +4,7 @@ import Modal from 'react-native-modal';
 import { CustomButton, CustomButtonTypes } from '../CustomButton/CustomButton';
 import { fonts } from 'src/Assets/Fonts';
 import { ReactNode } from 'react';
-import { colors } from 'src/Assets/Enums/colors';
+import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export enum CustomPopupTypes {
@@ -134,7 +134,7 @@ const style = StyleSheet.create({
     },
     button: {
         borderRadius: 5,
-        backgroundColor: colors?.BLUE,
+        backgroundColor: PRIMARY_COLOR,
         paddingHorizontal: 10,
     },
     buttonTextStyle: {

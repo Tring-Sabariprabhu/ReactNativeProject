@@ -12,7 +12,7 @@
     "workbench.iconTheme": "vs-seti",
     "workbench.sideBar.location": "left",
     "breadcrumbs.icons": true,
-    "workbench.activityBar.location": "top",
+    "workbench.activityBar.location": "default",
     "workbench.editor.editorActionsLocation": "default",
     "workbench.editor.tabActionLocation": "right",
     "search.searchEditor.doubleClickBehaviour": "goToLocation",
@@ -20,5 +20,12 @@
     "terminal.integrated.tabs.location": "left",
     "terminal.integrated.tabs.defaultIcon": "terminal",
     "notebook.insertToolbarLocation": "both",
-    "eslint.runtime": ""
+    "eslint.runtime": "",
+    "editor.fontFamily":  "Consolas, 'Courier New', monospace",
+    "editor.fontWeight": "normal",
+    "scm.inputFontSize": 13,
+    "notebook.markup.fontSize": 0,
+    "screencastMode.fontSize": 56,
+    "editor.minimap.sectionHeaderFontSize": 9,
+    "markdown.preview.fontSize": 14
 }

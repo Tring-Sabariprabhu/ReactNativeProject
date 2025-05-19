@@ -1,37 +1,48 @@
-import { Days, UserGender, UserRole } from '../Enums/users';
-import { doctors, DoctorSpecialists } from '../MockData/doctors';
-import { slotTimings } from '../MockData/slotTimings';
+import { Days, UserRole } from '../Enums/users';
+import { doctors } from '../MockData/doctors';
 import { users } from '../MockData/users';
-import { SlotTimings, User } from '../Types/Types';
 
 interface getDoctorProps {
     doctor_id: string
 }
-interface addUserProps {
+interface addDoctorProps {
     email: string
     doctor_name: string
     doctor_age: number
-    doctor_gender: UserGender
-    speciality: DoctorSpecialists,
-    work_days?: Days[]
-    slotTimings?: SlotTimings[]
+    doctor_gender: string
+    telphone: string
+    speciality: string,
+    work_days: Days[]
+    inTime: Date
+    outTime: Date
 }
 interface getAllUsersProps {
-    limit: number,
-    offset: number
+    limit: number;
+    offset: number;
+    search: string | undefined;
+}
+interface getAllUsersCountProps {
+    search?: string
 }
 interface getDoctorsProps extends getAllUsersProps {
-    speciality: DoctorSpecialists,
+    speciality: string,
     search?: string,
 }
-export const getAllPatients = ({ limit, offset }: getAllUsersProps) => {
+export const getAllPatients = ({ limit, offset, search }: getAllUsersProps) => {
     try {
-        // console.log(`limit: ${limit} , offset: ${offset}`);
-        const patients = users?.filter((user) => user?.user_role === UserRole?.PATIENT);
+        console.log('Search value -- > ' + search);
+        let patients;
+        if(search){
+            const toSearch = search?.trim().toLowerCase();
+            patients = users?.filter((user) => (user?.user_role === UserRole?.PATIENT && user?.user_name?.trim().toLowerCase().startsWith(toSearch)));
+        }else{
+            patients = users?.filter((user)=> user?.user_role === UserRole?.PATIENT);
+        }
         if (offset === 0) {
             return patients?.slice(0, limit);
+        }else{
+            return patients?.slice(offset, offset + limit);
         }
-        return patients?.slice(offset, offset + limit);
     }
     catch (err) {
         if (err instanceof Error) {
@@ -39,18 +50,30 @@ export const getAllPatients = ({ limit, offset }: getAllUsersProps) => {
         }
     }
 };
-export const getPatientsCount = () => {
-    const patients = users?.filter((user) => user?.user_role === UserRole?.PATIENT);
+export const getPatientsCount = ({ search }: getAllUsersCountProps) => {
+    let patients = users?.filter((user) => user?.user_role === UserRole?.PATIENT);
+    if (search) {
+        const toSearch = search?.trim().toLowerCase();
+        return (patients?.filter((patient) => patient?.user_name?.trim().toLowerCase().startsWith(toSearch))).length;
+    }
     return patients?.length;
 };
-export const getDoctorsCount = () => {
-    const doctorsDetails = users?.filter((user) => user?.user_role === UserRole?.DOCTOR);
+export const getDoctorsCount = ({ search }: getAllUsersCountProps) => {
+    let doctorsDetails = users?.filter((user) => user?.user_role === UserRole?.DOCTOR);
+    if (search) {
+        const toSearch = search?.trim().toLowerCase();
+        return (doctorsDetails.filter((doctor) => doctor?.user_name?.trim()?.toLowerCase().startsWith(toSearch))).length;
+    }
     return doctorsDetails?.length;
 };
-export const getAllDoctors = ({ limit, offset }: getAllUsersProps) => {
+export const getAllDoctors = ({ limit, offset, search }: getAllUsersProps) => {
     try {
-        // console.log(`limit: ${limit} , offset: ${offset}`);
+        console.log('Search value -- > ' + search);
         let allDoctors = users?.filter((user) => user?.user_role === UserRole?.DOCTOR);
+        if (search) {
+            const toSearch = search?.trim().toLowerCase();
+            allDoctors = allDoctors.filter((doctor) => doctor?.user_name?.trim()?.toLowerCase().startsWith(toSearch));
+        }
         if (offset === 0) {
             allDoctors = allDoctors?.slice(0, limit);
         } else {
@@ -58,12 +81,10 @@ export const getAllDoctors = ({ limit, offset }: getAllUsersProps) => {
         }
         allDoctors = allDoctors?.map((user) => {
             const doctorDetails = doctors?.find((doctor) => doctor?.doctor_id === user?.user_id);
-            const slots = slotTimings.filter((doctor) => doctor?.doctor_id === user?.user_id);
             return (
                 {
                     ...user,
                     ...doctorDetails,
-                    ...{ slotTimings: slots },
                 }
             );
         });
@@ -118,9 +139,11 @@ export const addDoctor = ({
     doctor_age,
     doctor_name,
     doctor_gender,
+    telphone,
     speciality,
     work_days,
-    slotTimings: slots }: addUserProps) => {
+    inTime,
+    outTime }: addDoctorProps) => {
     try {
         const userExists = users?.find((data) => data?.email === email);
         if (userExists) {
@@ -135,20 +158,15 @@ export const addDoctor = ({
             user_age: doctor_age,
             email,
             password: 'Test123@',
+            telphone,
         });
         doctors?.push({
             doctor_id: user_id,
             speciality,
             work_days,
+            inTime,
+            outTime,
         });
-        if (slots) {
-            slots.forEach(slot => {
-                slotTimings.push({
-                    ...slot,
-                    doctor_id: user_id,
-                });
-            });
-        }
         return 'Doctor added Successfully';
     }
     catch (err) {

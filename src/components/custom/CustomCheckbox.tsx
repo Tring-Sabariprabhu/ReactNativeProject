@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors } from 'src/Assets/Enums/colors';
 
 interface CustomCheckboxProps {
-    text: string
+    text?: string
     iconSize?: number
     iconColor?: string
     isChecked: boolean

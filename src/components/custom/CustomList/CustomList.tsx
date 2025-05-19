@@ -1,237 +1,161 @@
-import { ReactElement, useEffect, useState } from 'react';
-import { FlatList, ListRenderItemInfo, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ReactElement, useEffect, useRef, useState } from 'react';
+import { FlatList, ListRenderItemInfo, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Loader } from '../Loader';
+import { CustomTextInput } from '../CustomTextInput';
+import { styles } from 'src/Assets/Styles/global';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors } from 'src/Assets/Enums/colors';
+import { fonts } from 'src/Assets/Fonts';
 
-interface WhenPageMovedProps {
-    limit: number,
-    offset: number
+interface LoadPagesProps {
+    limit: number;
+    offset: number;
+    searchInput: string | undefined;
 }
 interface CustomListProps<T> {
     listDirection: 'row' | 'column',
-    listData: ArrayLike<T> | undefined
     listStyle?: ViewStyle
+    searchPlaceholder: string
+    limit: number
+    totalCount: number | undefined
     renderItem: (props: ListRenderItemInfo<T>) => ReactElement
-    paginatorProps?: {
-        totalCount: number
-        dataPerPage: number
-        containerPostion: 'center' | 'flex-start' | 'flex-end'
-        containerSize: number
-        whenPageMoved: ({ limit, offset }: WhenPageMovedProps) => void
-    }
+    fetchListItemsCount: ({ searchInput }: { searchInput?: string }) => void
+    fetchListItems: ({ limit, offset, searchInput }: LoadPagesProps) => Array<T> | undefined
 }
-export const CustomList = <T,>({ listData, listDirection, listStyle, renderItem, paginatorProps }: CustomListProps<T>) => {
+export const CustomList = <T,>({ listDirection, listStyle, renderItem, limit, totalCount, fetchListItems, fetchListItemsCount, searchPlaceholder }: CustomListProps<T>) => {
     const isHorizontal = listDirection === 'row';
-    const [activePage, setActivePage] = useState<number>(1);
-    const [totalPages, setTotalPages] = useState<number>();
-    const [pages, setPages] = useState<number[]>([]);
-    const [startingPage, setStartingPage] = useState<number>();
-    const [endingPage, setEndingPage] = useState<number>();
-    const [showEdges, setShowEdges] = useState<'start' | 'end' | 'both' | 'none'>('none');
+    const [loading, setLoading] = useState(false);
+    const [listItems, setListItems] = useState<T[]>();
+    const page = useRef<number>(0);
+    const searchInput = useRef<string | undefined>(undefined);
 
     useEffect(() => {
-        if (paginatorProps?.totalCount && paginatorProps?.dataPerPage) {
-            const { totalCount, dataPerPage } = paginatorProps;
-            setTotalPages(totalCount % dataPerPage === 0 ? totalCount / dataPerPage : parseInt((totalCount / dataPerPage).toString()) + 1);
-        }
-    }, [paginatorProps?.totalCount, paginatorProps?.dataPerPage]);
+        fetchingCount();
+    }, []);
 
     useEffect(() => {
-        if (typeof totalPages === 'number') {
-            setActivePage(1);
-            setStartingPage(1);
-            setPages([...Array(totalPages).keys()].map(i => i + 1));
-            if (totalPages <= 6) {
-                setShowEdges('none');
-                setEndingPage(totalPages);
-            } else {
-                setShowEdges('end');
-                setEndingPage(5);
+            if (totalCount === 0) {
+                setListItems([]);
+                setLoading(false);
             }
-            paginatorProps?.whenPageMoved({
-                limit: paginatorProps?.dataPerPage,
-                offset: 0,
-            });
-        }
-    }, [totalPages]);
+            else if(totalCount && totalCount > 0){
+                console.log(totalCount);
+                setInitialPage();
+            }
+    }, [totalCount]);
 
-    const whenPageMove = (active: number) => {
-        if (totalPages) {
-            setActivePage(active);
-            paginationCheck(active);
-            paginatorProps?.whenPageMoved(
-                {
-                    limit: paginatorProps?.dataPerPage,
-                    offset: (active - 1) * paginatorProps?.dataPerPage,
+    const setInitialPage = () => {
+        setListItems([]);
+        fetchingListItems(true);
+    };
+    const fetchingCount = async () => {
+        setLoading(true);
+        console.log('fetching Count');
+        await fetchListItemsCount({ searchInput: searchInput?.current });
+    };
+
+    const fetchingListItems = async (initial = false) => {
+        console.log('fetching data');
+        setLoading(true);
+        if (totalCount) {
+            setTimeout(async () => {
+                const fetchedData = await fetchListItems({
+                    limit: limit,
+                    offset: (initial ? 0 : page.current * limit),
+                    searchInput: searchInput.current,
                 });
+                if (fetchedData) {
+                    if (initial) {
+                        page.current = 1;
+                        setListItems(fetchedData);
+                    } else if (page.current > 0 && listItems) {
+                        page.current = page.current + 1;
+                        setListItems([...listItems, ...fetchedData]);
+                    }
+                    setLoading(false);
+                }
+            }, 2000);
         }
     };
-    const paginationCheck = (active: number) => {
-        if (totalPages && totalPages > 6) {
-            if (active <= 4) {
-                setShowEdges('end');
-                setStartingPage(1);
-                setEndingPage(5);
-            } else if (active >= totalPages - 3) {
-                setShowEdges('start');
-                setStartingPage(totalPages - 4);
-                setEndingPage(totalPages);
-            } else {
-                setShowEdges('both');
-                setStartingPage(active - 1);
-                setEndingPage(active + 1);
+
+    const onEndReached = () => {
+        if (totalCount) {
+            if (!loading && ((page.current * limit) < totalCount)) {
+                fetchingListItems(false);
             }
         }
     };
-    const moveForward = () => {
-        if (totalPages && (activePage < (totalPages))) {
-            whenPageMove(activePage + 1);
+    const handleSearchChange = (value: string) => {
+        if (value?.length > 0) {
+            searchInput.current = value;
+            if (!loading) {
+                fetchingCount();
+            }
+        } else if (value?.length === 0) {
+            searchInput.current = undefined;
+            if (!loading) {
+                fetchingCount();
+            }
         }
     };
-    const moveBackward = () => {
-        if (activePage > 1) {
-            whenPageMove(activePage - 1);
-        }
+    const debounce = (func, delay) => {
+        let timeoutId;
+
+        return (...args) => {
+            clearTimeout(timeoutId);
+
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
     };
-    const isFirstPageActive = activePage === 1;
-    const isLastPageActive = activePage === totalPages;
+
+    const debounceChange = debounce(handleSearchChange, 1000);
+
     return (
         <View style={{ flex: 1 }}>
-            {
-                listData &&
-                <>
-                    <FlatList
-                        contentContainerStyle={listStyle}
-                        horizontal={isHorizontal}
-                        data={listData}
-                        renderItem={(props) => (renderItem(props))}
-                    />
-                    {
-                        paginatorProps && listDirection === 'column' &&
-                        <View style={{ ...style?.pageNavigateContainer, justifyContent: paginatorProps?.containerPostion }}>
-                            <View style={style?.pageNavigator}>
-                                <TouchableOpacity style={style?.navigatorBox}
-                                    disabled={isFirstPageActive}
-                                    onPress={moveBackward}>
-                                    <Icon name={'keyboard-arrow-left'}
-                                        style={style?.arrowIcon} />
-                                </TouchableOpacity>
-                                {
-                                    totalPages &&
-                                    <View style={style?.row}>
-                                        {
-                                            (showEdges === 'start' || showEdges === 'both') &&
-                                            <>
-                                                <TouchableOpacity style={{
-                                                    ...style?.numberBox,
-                                                    backgroundColor: colors?.WHITE,
-                                                }} onPress={() => whenPageMove(1)}>
-                                                    <Text style={style?.page}>
-                                                        1
-                                                    </Text>
-                                                </TouchableOpacity>
-                                                <Text style={style?.page}>
-                                                    ...
-                                                </Text>
-                                            </>
-                                        }
-                                        <View style={style?.row}>
-                                            {
-                                                startingPage && endingPage &&
-                                                pages?.map((page, index) => (
-                                                    page >= startingPage && page <= endingPage &&
-                                                    <TouchableOpacity
-                                                        disabled={page === activePage}
-                                                        onPress={() => whenPageMove(page)}
-                                                        key={index}
-                                                        style={{
-                                                            ...style?.numberBox,
-                                                            backgroundColor: (page === activePage ? colors?.BLUE : colors?.WHITE),
-                                                        }}>
-                                                        <Text style={page === activePage ? style?.activePage : style?.page}>
-                                                            {page.toString()}
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                ))
-                                            }
-                                        </View>
-                                        {
-                                            (showEdges === 'end' || showEdges === 'both') &&
-                                            <>
-                                                <Text style={style?.page}>
-                                                    ...
-                                                </Text>
-                                                <TouchableOpacity style={{
-                                                    ...style?.numberBox,
-                                                    backgroundColor: colors?.WHITE,
-                                                }} onPress={() => whenPageMove(totalPages)}>
-                                                    <Text style={style?.page}>
-                                                        {totalPages?.toString()}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            </>
-                                        }
-                                    </View>
-                                }
-                                <TouchableOpacity style={style?.navigatorBox}
-                                    onPress={moveForward}
-                                    disabled={isLastPageActive}>
-                                    <Icon name={'keyboard-arrow-right'}
-                                        style={style?.arrowIcon}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    }
-                </>
-            }
-        </View>
+            <View style={style?.searchView}>
+                <CustomTextInput
+                    readOnly={loading}
+                    placeholder={`Search ${searchPlaceholder}`}
+                    icon={<Icon name={'search'} size={24} style={style?.searchIcon} />}
+                    onChangeText={debounceChange}
+                    inputStyle={style?.searchBox}
+                    keyboardType={'default'} />
+            </View>
+            <FlatList
+                data={listItems}
+                refreshing={loading}
+                contentContainerStyle={[listStyle]}
+                horizontal={isHorizontal}
+                renderItem={(props) => (renderItem(props))}
+                {...(loading && { ListFooterComponent: <Loader size={50} /> })}
+                onEndReached={onEndReached}
+            />
+            {(!loading) && totalCount === 0 &&
+                <View style={{ flex: 1, alignItems: 'center' }}>
+                    <View>
+                        <Text style={{ fontFamily: fonts?.LIGHT, fontSize: 20 }}>
+                            No Users found
+                        </Text>
+                    </View>
+                </View>}
+        </View >
     );
 };
 
 const style = StyleSheet.create({
-    pageNavigateContainer: {
-        flexDirection: 'row',
+    searchView: {
+        padding: 20,
     },
-    pageNavigator: {
-        paddingVertical: 15,
-        paddingHorizontal: 15,
-        width: '100%',
-        gap: 10,
-        backgroundColor: colors?.WHITE,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderRadius: 8,
-        boxShadow: `0px 1px 1px 2px ${colors?.GRAY}`,
+    searchBox: {
+        ...styles?.textInput,
+        fontSize: 16,
+        paddingHorizontal: 40,
+    },
+    searchIcon: {
         position: 'absolute',
-        bottom: 0,
-    },
-    row: {
-        flexDirection: 'row',
-        gap: 8,
-    },
-    arrowIcon: {
-        fontSize: 28,
-        padding: 2,
-        borderRadius: 20,
-        backgroundColor: colors?.BLUE,
-        color: colors?.WHITE,
-    },
-    navigatorBox: {
-        borderRadius: 5,
-    },
-    numberBox: {
-        borderRadius: 5,
-        borderColor: colors?.GRAY,
-        paddingHorizontal: 10,
-        paddingVertical: 3,
-    },
-    page: {
-        fontSize: 20,
-    },
-    activePage: {
-        color: colors?.WHITE,
-        fontSize: 20,
+        opacity: 0.5,
+        top: '25%',
+        left: 10,
     },
 });

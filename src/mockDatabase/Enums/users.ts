@@ -13,10 +13,6 @@ export enum UserRole {
     ADMIN = 'admin',
 }
 
-export enum Slots  {
-    slot1 ='8am - 12am',
-    slot2 = '2pm - 5pm',
-}
 export enum Days {
     monday = 'Monday',
     tuesday = 'Tuesday',

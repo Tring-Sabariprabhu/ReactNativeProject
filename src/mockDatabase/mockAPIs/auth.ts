@@ -10,10 +10,11 @@ interface signinProps {
 interface signupProps {
     user_name: string,
     user_age: number
-    user_role?: UserRole
-    user_gender: UserGender
+    user_role?: string
+    user_gender: string
     email: string,
     password: string,
+    telphone: string
 }
 export const signin = ({ email, password }: signinProps) => {
     try {
@@ -34,7 +35,7 @@ export const signin = ({ email, password }: signinProps) => {
         }
     }
 };
-export const signup = ({ email, user_name, password, user_age, user_role = UserRole?.PATIENT, user_gender}: signupProps) => {
+export const signup = ({ email, user_name, password, user_age, user_role = UserRole?.PATIENT, user_gender, telphone}: signupProps) => {
     try {
         const userExists = users?.find((data) => data?.email === email);
         if (userExists) {
@@ -44,6 +45,7 @@ export const signup = ({ email, user_name, password, user_age, user_role = UserR
             user_id: (users?.length + 1).toString(),
             user_name,
             user_role,
+            telphone,
             user_gender,
             user_age,
             email,
