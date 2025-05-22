@@ -4,11 +4,11 @@ import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
 interface LoaderProps {
     style?: ViewStyle
     color?: string
-    size?: number
+    size?: number | 'large' | 'small'
 }
-export const Loader = ({ style, color, size }: LoaderProps) => (
+export const Loader = ({ style, color, size = 'large' }: LoaderProps) => (
     <ActivityIndicator
-        size={size ? size : 'large'}
-        color={color ? color : PRIMARY_COLOR}
+        size={size}
+        color={color || PRIMARY_COLOR}
         style={[{ flex: 1 }, style]} />
 );

@@ -8,6 +8,7 @@ export enum colors {
     GRAY = '#EFEFEF',
     DARK_GRAY = '#DFD0B8',
     BLACK = '#000000',
+    YELLOW = '#fba81ab4',
 }
 
 export const PRIMARY_COLOR = colors?.DARK_BLUE;

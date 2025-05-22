@@ -32,6 +32,7 @@ export const SelectInput = <T,>({ items, name, control, label, labelStyle, onVal
                     name={name}
                     render={({ field }) => (
                         <Picker
+                            value={field?.value}
                             pickerProps={{ mode: 'dropdown' }}
                             placeholder={{
                                 label: placeHolder,

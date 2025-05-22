@@ -25,7 +25,7 @@ interface TextInputFieldProps {
     iconStyle?: ViewStyle;
     onIconPress?: () => void;
     isSecureInput?: boolean;
-    readOnly?: boolean
+    editable?: boolean
     maxLength?: number;
 }
 
@@ -42,15 +42,17 @@ export const CustomTextInput = ({
     inputStyle,
     keyboardType,
     errMessage,
-    readOnly = false,
+    editable = true,
     isSecureInput = false }: TextInputFieldProps) => {
     const [visible, setVisible] = useState<boolean>(false);
 
-    const handleChange = (text: string, onChange: (...event: any[]) => void)=>{
-        if(keyboardType === 'numeric'){
-            onChange(text.replace(/[^0-9]/g, ''));
-        }else{
-            onChange(text);
+    const handleChange = (text: string, onChange: (...event: any[]) => void) => {
+        if (editable) {
+            if (keyboardType === 'numeric') {
+                onChange(text.replace(/[^0-9]/g, ''));
+            } else {
+                onChange(text);
+            }
         }
     };
     return (
@@ -79,25 +81,25 @@ export const CustomTextInput = ({
                             render={({ field: { value, onChange, onBlur } }) => (
                                 <TextInput
                                     {...(isSecureInput && { secureTextEntry: !visible })}
-                                    readOnly={readOnly}
+                                    editable={editable}
                                     placeholder={placeholder}
                                     maxLength={maxLength}
                                     style={inputStyle}
                                     keyboardType={keyboardType}
-                                    value={value}
                                     onChangeText={(text)=> handleChange(text, onChange)}
+                                    value={value}
                                     onBlur={onBlur}
                                     autoCorrect={false}
-                                    />)} /> :
+                                />)} /> :
                         <TextInput
                             secureTextEntry={visible}
-                            readOnly={readOnly}
+                            editable={editable}
                             placeholder={placeholder}
                             maxLength={maxLength}
                             style={inputStyle}
                             keyboardType={keyboardType}
                             value={value}
-                            onChangeText={onChangeText}
+                            {...(onChangeText && {onChangeText:(text)=> handleChange(text, onChangeText)})}
                             autoCorrect={false}
                         />}
             </View>

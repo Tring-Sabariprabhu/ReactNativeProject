@@ -1,14 +1,6 @@
-
-import { publicScreens } from 'src/Assets/Enums/screens';
-import { SigninScreen } from 'src/Components/Authentication/SigninScreen';
-import { SignupScreen } from 'src/Components/Authentication/SignupScreen';
-export const publicRoutes = [
-    {
-        name: publicScreens?.Signin,
-        component: SigninScreen,
-    },
-    {
-        name: publicScreens?.Signup,
-        component: SignupScreen,
-    },
+import { ScreenProps } from 'src/Components/Types/ScreenProps';
+import { allRoutes } from './allRoutes';
+export const publicRoutes: Array<ScreenProps> = [
+    allRoutes?.Signin,
+    allRoutes?.Signup,
 ];

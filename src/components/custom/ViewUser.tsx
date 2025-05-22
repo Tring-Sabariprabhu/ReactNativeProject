@@ -1,22 +1,31 @@
+import moment from 'moment';
 import { View, Text, StyleSheet } from 'react-native';
 import { fonts } from 'src/Assets/Fonts';
 import { styles } from 'src/Assets/Styles/global';
-import { Days, DoctorSpecialists, UserGender } from 'src/MockDatabase/Enums/users';
+import { Days, DoctorSpecialists } from 'src/MockDatabase/Enums/doctors';
+import { UserGender } from 'src/MockDatabase/Enums/users';
 
 interface User {
     user_name: string
     user_age: number
     user_gender: UserGender
     email: string
+    telphone: string
 }
 export interface Doctor extends User {
     speciality: DoctorSpecialists,
     work_days: Days[]
+    inTime: Date
+    outTime: Date
 }
 
 export interface Patient extends User { }
 
-export const ViewUser = (user: Doctor | Patient | undefined) => {
+export const ViewUser = (user: Doctor | Patient | null) => {
+    const getTime = (time: Date) => {
+            const momentTIme = moment(time);
+            return momentTIme.get('hour') + ':' + momentTIme.get('minute');
+        };
     return (
         <View style={style?.viewContainer}>
             <View style={style?.contentContainer}>
@@ -41,6 +50,12 @@ export const ViewUser = (user: Doctor | Patient | undefined) => {
                 <Text style={style?.label}>Gender : </Text>
                 <Text style={style?.contentWithCapitalized}>
                     {user?.user_gender}
+                </Text>
+            </View>
+             <View style={style?.contentContainer}>
+                <Text style={style?.label}>Phone : </Text>
+                <Text style={style?.contentWithCapitalized}>
+                    {user?.telphone}
                 </Text>
             </View>
             {
@@ -69,6 +84,16 @@ export const ViewUser = (user: Doctor | Patient | undefined) => {
                         }
                 </View>
             }
+            {/* {
+                user &&
+                'inTime' in user &&
+                'outTime' in user &&
+                user?.inTime &&
+                <View style={{flexDirection: ''}}>
+                    <Text style={style?.content}>{getTime(user?.inTime)}</Text>-
+                    <Text style={style?.content}>{getTime(user?.outTime)}</Text>
+                </View>
+            } */}
         </View>
     );
 };
@@ -84,14 +109,14 @@ const style = StyleSheet.create({
     label: {
         ...styles?.capitalizedContent,
         fontFamily: fonts?.MEDIUM,
-        fontSize: 18,
+        fontSize: 16,
     },
     content: {
         ...styles?.paragraph,
-        fontSize: 18,
+        fontSize: 16,
     },
     contentWithCapitalized: {
         ...styles?.capitalizedContent,
-        fontSize: 18,
+        fontSize: 16,
     },
 });

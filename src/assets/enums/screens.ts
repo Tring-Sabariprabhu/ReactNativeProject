@@ -1,14 +1,15 @@
-export enum publicScreens {
+export enum screens {
     Signin = 'Signin',
     Signup = 'Signup',
-}
-
-export enum privateScreens {
     Home = 'Home',
+    DoctorsStack = 'DoctorsStack',
+    PatientsStack = 'PatientsStack',
     Doctors = 'Doctors',
     Patients = 'Patients',
     BookAppointment = 'BookAppointment',
     ViewAppointments = 'ViewAppointments',
     AddDoctor = 'AddDoctor',
     AppointmentsArrived = 'AppointmentsArrived',
+    SelectDoctor = 'SelectDoctor',
+    UserDetails = 'UserDetails',
 }

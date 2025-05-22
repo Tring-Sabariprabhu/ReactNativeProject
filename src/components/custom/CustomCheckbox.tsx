@@ -16,8 +16,8 @@ export const CustomCheckbox = ({ text, iconSize, iconColor, onChange, isChecked,
         <View style={style?.item}>
             <Icon
                 name={isChecked ? 'checkbox-marked' : 'checkbox-blank-outline'}
-                size={iconSize ? iconSize : 15}
-                color={iconColor ? iconColor : colors?.BLACK}
+                size={iconSize || 15}
+                color={iconColor || colors?.BLACK}
                 onPress={() => onChange(!isChecked)} />
             <Text style={[style?.textStyle, textStyle]}>{text}</Text>
         </View>

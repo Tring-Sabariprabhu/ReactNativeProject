@@ -34,11 +34,11 @@ export const users: User[] = [
     },
     {
         user_id: '4',
-        user_name: 'Priya',
+        user_name: 'Dhanam',
         user_role: UserRole?.PATIENT,
         user_age: 22,
         user_gender: UserGender?.FEMALE,
-        email: 'priya@mailinator.com',
+        email: 'dhanam@mailinator.com',
         password: 'Test123@',
         telphone: '1234567890',
     },

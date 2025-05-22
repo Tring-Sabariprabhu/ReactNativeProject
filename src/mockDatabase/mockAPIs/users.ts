@@ -19,14 +19,14 @@ interface addDoctorProps {
 interface getAllUsersProps {
     limit: number;
     offset: number;
-    search: string | undefined;
+    search?: string | null;
 }
 interface getAllUsersCountProps {
-    search?: string
+    search: string | null
 }
 interface getDoctorsProps extends getAllUsersProps {
     speciality: string,
-    search?: string,
+    search: string | null,
 }
 export const getAllPatients = ({ limit, offset, search }: getAllUsersProps) => {
     try {
@@ -70,7 +70,7 @@ export const getAllDoctors = ({ limit, offset, search }: getAllUsersProps) => {
     try {
         console.log('Search value -- > ' + search);
         let allDoctors = users?.filter((user) => user?.user_role === UserRole?.DOCTOR);
-        if (search) {
+        if (search !== null) {
             const toSearch = search?.trim().toLowerCase();
             allDoctors = allDoctors.filter((doctor) => doctor?.user_name?.trim()?.toLowerCase().startsWith(toSearch));
         }

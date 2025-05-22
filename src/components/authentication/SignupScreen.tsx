@@ -1,5 +1,4 @@
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import logo from '../../Assets/Images/galaxy_logo.png';
 import { useNavigation } from '@react-navigation/native';
 import { CustomTextInput } from '../Custom/CustomTextInput';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
@@ -7,8 +6,7 @@ import { useForm } from 'react-hook-form';
 import { signup } from 'src/MockDatabase/MockAPIs/auth';
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
-import { publicScreens } from 'src/Assets/Enums/screens';
-import { NavigationProp, style } from './SigninScreen';
+import { style } from './SigninScreen';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { inputPatterns } from 'src/Validation/inputPatterns';
@@ -16,6 +14,9 @@ import { inputTypes } from 'src/Assets/Enums/inputTypes';
 import { UserGender } from 'src/MockDatabase/Enums/users';
 import { SelectInput } from '../Custom/SelectInput';
 import { useState } from 'react';
+import auth_logo from '../../Assets/Images/login_background.jpg';
+import { screens } from 'src/Assets/Enums/screens';
+import { NavigationProp } from '../Types/NavigationProp';
 
 interface FormValues {
     email: string;
@@ -95,7 +96,7 @@ export const SignupScreen = () => {
                     title: 'Success',
                     textBody: message,
                 });
-                navigation?.navigate(publicScreens?.Signin);
+                navigation?.navigate(screens?.Signin);
             }
         }
         catch (err) {
@@ -117,11 +118,11 @@ export const SignupScreen = () => {
     };
     const [disableMode, setDisableMode ] = useState(false);
     return (
-        <ScrollView >
+        <ScrollView>
             <View style={style?.screen}>
                 <View style={style?.container}>
                     <View style={style.imageContainer}>
-                        <Image source={logo} style={style?.image} />
+                        <Image source={auth_logo} style={style?.image} />
                     </View>
                     <View style={style?.formContainer}>
                         <View style={style?.headingContainer}>
@@ -231,7 +232,7 @@ export const SignupScreen = () => {
                             <Text style={style?.footerText}>
                                 Already have an Account?
                             </Text>
-                            <TouchableOpacity onPress={() => navigation?.navigate('Signin')} disabled={disableMode}>
+                            <TouchableOpacity onPress={() => navigation?.navigate(screens?.Signin)} disabled={disableMode}>
                                 <Text style={style?.navigator}>
                                     Login
                                 </Text>

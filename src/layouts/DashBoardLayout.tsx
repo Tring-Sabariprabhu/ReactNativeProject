@@ -9,10 +9,11 @@ import { colors } from 'src/Assets/Enums/colors';
 import { useEffect } from 'react';
 import { getCurrentUser } from 'src/MockDatabase/MockAPIs/auth';
 import { setUser } from 'src/Redux/userSlice';
-import { privateScreens } from 'src/Assets/Enums/screens';
-import { privateRoutes, ScreenProps } from 'src/Routes/privateRoutes';
+import { privateRoutes } from 'src/Routes/privateRoutes';
 import { DrawerContent } from 'src/Components/Custom/DrawerContent';
 import { HomeScreen } from 'src/Components/Screens/HomeScreen';
+import { screens } from 'src/Assets/Enums/screens';
+import { ScreenProps } from 'src/Components/Types/ScreenProps';
 
 interface DrawerIconProps {
     color: string
@@ -21,11 +22,11 @@ interface DrawerIconProps {
     iconFamily: 'MaterialIcons' | 'FontAwesome'
 }
 const DrawerIcon = ({ color, size, iconName, iconFamily }: DrawerIconProps) => {
-    switch(iconFamily){
+    switch (iconFamily) {
         case 'MaterialIcons':
-            return <MaterialIcon name={iconName} color={color} size={size}/>;
+            return <MaterialIcon name={iconName} color={color} size={size} />;
         case 'FontAwesome':
-            return <FontAwesomeIcon name={iconName} color={color} size={size}/>;
+            return <FontAwesomeIcon name={iconName} color={color} size={size} />;
     }
 };
 
@@ -51,10 +52,13 @@ export const DashBaordLayout = () => {
     return (
         <NavigationContainer>
             <Drawer.Navigator
-                initialRouteName={privateScreens?.Home}
+                initialRouteName={screens?.Home}
                 drawerContent={(props) => <DrawerContent {...props} />}
                 screenOptions={
                     {
+                        drawerContentContainerStyle: {
+                            backgroundColor: colors?.WHITE,
+                        },
                         headerTitleStyle: {
                             fontFamily: fonts?.MEDIUM,
                             fontSize: 22,
@@ -71,15 +75,14 @@ export const DashBaordLayout = () => {
                             borderRadius: 10,
                         },
                         drawerActiveTintColor: colors?.DARK_BLUE,
-
                     }}>
-                <Drawer.Screen name={privateScreens?.Home}
+                <Drawer.Screen name={screens?.Home}
                     component={HomeScreen}
                     options={
                         {
                             title: 'Dashboard',
                             drawerIcon: (props) => (
-                                <DrawerIcon {...props} iconName={'home'} iconFamily={'MaterialIcons'}/>
+                                <DrawerIcon {...props} iconName={'home'} iconFamily={'MaterialIcons'} />
                             ),
                         }
                     } />

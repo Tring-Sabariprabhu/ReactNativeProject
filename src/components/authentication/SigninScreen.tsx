@@ -1,9 +1,6 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import logo from '../../Assets/Images/galaxy_logo.png';
-import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import logo from '../../Assets/Images/login_background.jpg';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CustomTextInput } from '../Custom/CustomTextInput';
 import { fonts } from '../../Assets/Fonts';
 import { useForm } from 'react-hook-form';
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
@@ -19,16 +16,9 @@ import { toastStyle } from 'src/Assets/Styles/toast';
 import { styles } from 'src/Assets/Styles/global';
 import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
 import { useState } from 'react';
-
-type RootStackParamList = {
-    Signin: undefined;
-    Signup: undefined;
-    Home: undefined;
-    AddDoctor: undefined;
-    Doctors: undefined
-    Patients: undefined
-};
-export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+import { CustomTextInput } from '../Custom/CustomTextInput';
+import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
+import { screens } from 'src/Assets/Enums/screens';
 
 interface FormValues {
     email: string;
@@ -67,17 +57,15 @@ export const SigninScreen = () => {
                 await AsyncStorage.setItem('token', data?.user_id);
             }
             const user = await getCurrentUser();
-            setTimeout(() => {
-                dispatch(setUser({
-                    user_id: user?.user_id,
-                    user_name: user?.user_name,
-                    user_role: user?.user_role,
-                    user_gender: user?.user_gender,
-                    user_age: user?.user_age,
-                    email: user?.email,
-                    refetchToken: true,
-                }));
-            }, 1000);
+            dispatch(setUser({
+                user_id: user?.user_id,
+                user_name: user?.user_name,
+                user_role: user?.user_role,
+                user_gender: user?.user_gender,
+                user_age: user?.user_age,
+                email: user?.email,
+                refetchToken: true,
+            }));
         }
         catch (err) {
             setDisableMode(false);
@@ -99,67 +87,71 @@ export const SigninScreen = () => {
     };
     const [disableMode, setDisableMode] = useState(false);
     return (
-        <View style={style?.screen}>
-            <View style={style?.container}>
-                <View style={style.imageContainer}>
-                    <Image source={logo} style={style?.image} />
-                </View>
-                <View style={style?.formContainer}>
-                    <View style={style?.headingContainer}>
-                        <Text style={style?.heading}>
-                            Let's Sign you in.
-                        </Text>
-                        <Text style={style?.content}>
-                            Please Sign in to continue
-                        </Text>
+        <ScrollView >
+            <View style={style?.screen}>
+                <View style={style?.container}>
+                    <View style={style.imageContainer}>
+                        <Image source={logo} style={style?.image} />
                     </View>
-                    <CustomTextInput
-                        required
-                        placeholder={'Enter email'}
-                        inputStyle={style?.textInput}
-                        label={'Email'}
-                        labelStyle={style?.label}
-                        keyboardType={'email-address'}
-                        control={control}
-                        name={'email'}
-                        value={watch('email')}
-                        errMessage={errors?.email?.message}
-                    />
-                    <CustomTextInput
-                        required
-                        isSecureInput
-                        placeholder={'Enter password'}
-                        inputStyle={style?.textInput}
-                        label={'Password'}
-                        labelStyle={style?.label}
-                        keyboardType={'default'}
-                        control={control}
-                        name={'password'}
-                        value={watch('password')}
-                        errMessage={errors?.password?.message}
-                    />
-                    <CustomButton
-                        disableMode={disableMode}
-                        type={CustomButtonTypes?.OPASITYBUTTON}
-                        title={'Sign in'}
-                        buttonStyle={style?.button}
-                        textStyle={style?.buttonTextStyle}
-                        onPress={handleSubmit(onSubmit)}
-                    />
-                    <View style={style?.footer}>
-                        <Text style={style?.footerText}>
-                            Don't have an Account?
-                        </Text>
-                        <TouchableOpacity onPress={() => navigation?.navigate('Signup')} disabled={disableMode}>
-                            <Text style={style?.navigator}>
-                                Register
+                    <View style={style?.formContainer}>
+                        <View style={style?.headingContainer}>
+                            <Text style={style?.heading}>
+                                Let's Sign you in.
                             </Text>
-                        </TouchableOpacity>
+                            <Text style={style?.content}>
+                                Please Sign in to continue
+                            </Text>
+                        </View>
+                        <CustomTextInput
+                            required
+                            editable={!disableMode}
+                            placeholder={'Enter email'}
+                            inputStyle={style?.textInput}
+                            label={'Email'}
+                            labelStyle={style?.label}
+                            keyboardType={'email-address'}
+                            control={control}
+                            name={'email'}
+                            value={watch('email')}
+                            errMessage={errors?.email?.message}
+                        />
+                        <CustomTextInput
+                            required
+                            isSecureInput
+                            editable={!disableMode}
+                            placeholder={'Enter password'}
+                            inputStyle={style?.textInput}
+                            label={'Password'}
+                            labelStyle={style?.label}
+                            keyboardType={'default'}
+                            control={control}
+                            name={'password'}
+                            value={watch('password')}
+                            errMessage={errors?.password?.message}
+                        />
+                        <CustomButton
+                            disableMode={disableMode}
+                            type={CustomButtonTypes?.OPASITYBUTTON}
+                            title={'Sign in'}
+                            buttonStyle={style?.button}
+                            textStyle={style?.buttonTextStyle}
+                            onPress={handleSubmit(onSubmit)}
+                        />
+                        <View style={style?.footer}>
+                            <Text style={style?.footerText}>
+                                Don't have an Account?
+                            </Text>
+                            <TouchableOpacity onPress={() => navigation?.navigate(screens?.Signup)} disabled={disableMode}>
+                                <Text style={style?.navigator}>
+                                    Register
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
 
+                </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
@@ -167,20 +159,19 @@ export const style = StyleSheet.create({
     screen: {
         ...styles?.screen,
         backgroundColor: colors?.WHITE,
+        height: '100%',
         paddingHorizontal: 40,
         paddingVertical: 80,
     },
     imageContainer: {
-        // justifyContent: 'center',
         alignItems: 'center',
     },
     image: {
-        width: 150,
-        height: 150,
+        width: 200,
+        height: 200,
     },
     container: {
         flex: 1,
-        // justifyContent: 'center',
         paddingTop: 10,
         gap: 40,
     },

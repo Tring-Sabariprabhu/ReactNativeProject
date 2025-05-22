@@ -20,7 +20,6 @@ import { DashBaordLayout } from 'src/Layouts/DashBoardLayout';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Loader } from 'src/Components/Custom/Loader';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/Redux/store';
 import { KeyboardAvoidingView } from 'react-native';
@@ -28,32 +27,22 @@ import UserInactivity from 'react-native-user-inactivity';
 import { CustomPopup, CustomPopupTypes } from 'src/Components/Custom/CustomPopup/CustomPopup';
 import { styles } from 'src/Assets/Styles/global';
 import SplashScreen from 'react-native-splash-screen';
-import { colors } from 'src/Assets/Enums/colors';
 
 function App(): React.JSX.Element {
-  const [token, setToken] = useState<string | null>();
-  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState<string | null>('use');
   const user = useSelector((state: RootState) => state?.user);
 
-  useEffect(()=>{
-    SplashScreen.hide();
-    setLoading(true);
-  },[]);
-
-  const fetchToken = () => {
-    setLoading(true);
-    AsyncStorage?.getItem('token').then((data) => {
-      setLoading(false);
+  useEffect(() => {
+     AsyncStorage?.getItem('token').then((data) => {
+      SplashScreen.hide();
       if (data) {
         setToken(data);
       } else {
         setToken(null);
       }
     });
-  };
-  useEffect(() => {
-    fetchToken();
   }, [user]);
+
 
 
   const [active, setActive] = useState(true);
@@ -62,10 +51,10 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 , backgroundColor: colors?.WHITE}}>
+      <SafeAreaView style={{ flex: 1}}>
         <KeyboardAvoidingView
           behavior={'height'}
-          style={{ flex: 1 }}>
+          style={{ flex: 1}}>
           <UserInactivity
             isActive={active}
             timeForInactivity={timer}
@@ -79,8 +68,6 @@ function App(): React.JSX.Element {
               backgroundColor={isDarkMode ? Colors.darker : Colors.lighter}
             />
             {
-              loading ?
-                <Loader  size={60}/> :
                 (showPopup ?
                   <View >
                     <CustomPopup

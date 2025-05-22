@@ -9,7 +9,7 @@ export const styles = StyleSheet?.create({
     },
     textInput: {
         fontFamily: fonts?.LIGHT,
-        boxShadow: `1px 1px 2px 1px ${colors?.LIGHT_GRAY}`,
+        boxShadow: `1px 1px 1px 2px ${colors?.LIGHT_GRAY}`,
         borderRadius: 8,
     },
     label: {
@@ -37,18 +37,17 @@ export const styles = StyleSheet?.create({
     },
     button: {
         fontFamily: fonts?.MEDIUM,
-        // opacity: 0.9,
     },
     popupButton: {
-        padding: 3,
+        paddingVertical: 2,
+        paddingHorizontal: 10,
     },
     popupButtonText: {
-        fontFamily: fonts?.REGULAR,
+        fontFamily: fonts?.MEDIUM,
         fontSize: 20,
-        paddingHorizontal: 6,
     },
      dropDown: {
-        boxShadow: `1px 1px 2px 1px ${colors?.LIGHT_GRAY}`,
+        boxShadow: `1px 1px 1px 2px ${colors?.LIGHT_GRAY}`,
         borderRadius: 8,
     },
     dropDownItem: {

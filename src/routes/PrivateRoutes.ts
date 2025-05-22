@@ -1,35 +1,23 @@
 
-import { privateScreens } from 'src/Assets/Enums/screens';
-import { AddDoctorScreen } from 'src/Components/Screens/AddDoctorScreen';
-import { AppointmentsArrived } from 'src/Components/Screens/AppointmentsArrived';
-import { BookAppointmentScreen } from 'src/Components/Screens/BookAppointmentScreen';
-import { DoctorsScreen } from 'src/Components/Screens/DoctorsScreen';
-import { PatientsScreen } from 'src/Components/Screens/PatientsScreen';
-import { ViewAppointmentsScreen } from 'src/Components/Screens/ViewAppointmentsScreen';
+import { screens } from 'src/Assets/Enums/screens';
+import { SelectDoctor } from 'src/Components/Screens/BookAppointmentStack/SelectDoctor';
+import { ScreenProps } from 'src/Components/Types/ScreenProps';
 import { UserRole } from 'src/MockDatabase/Enums/users';
+import { allRoutes } from './allRoutes';
 
-export interface ScreenProps{
-    name: privateScreens;
-    component: React.ComponentType;
-    iconName: string
-    options?:{
-        headerTitle: string;
-        title: string;
-    }
-    iconFamily: 'MaterialIcons' | 'FontAwesome',
-}
-
-export const privateRoutes: Record<UserRole, ScreenProps[] > = {
-    'admin': [
+export const privateRoutes: Record<UserRole, ScreenProps[]> = {
+    [UserRole.ADMIN]: [
         {
-            name: privateScreens?.Doctors,
-            component: DoctorsScreen,
+            ...allRoutes?.DoctorsStack,
+            options: {
+                headerTitle: 'Doctors',
+                title: 'Doctors',
+            },
             iconName: 'stethoscope',
             iconFamily: 'FontAwesome',
         },
         {
-            name: privateScreens?.AddDoctor,
-            component: AddDoctorScreen,
+            ...allRoutes?.AddDoctor,
             options: {
                 headerTitle: 'Add Doctor',
                 title: 'Add Doctor',
@@ -38,26 +26,33 @@ export const privateRoutes: Record<UserRole, ScreenProps[] > = {
             iconFamily: 'FontAwesome',
         },
         {
-            name: privateScreens?.Patients,
-            component: PatientsScreen,
+            ...allRoutes?.PatientsStack,
             iconName: 'person',
+            options: {
+                headerTitle: 'Patients',
+                title: 'Patients',
+            },
             iconFamily: 'MaterialIcons',
         },
     ],
-    'patient': [
+    [UserRole?.PATIENT]: [
         {
-            name: privateScreens?.BookAppointment,
-            component: BookAppointmentScreen,
+            ...allRoutes?.BookAppointment,
             options: {
                 headerTitle: 'Book Appointment',
                 title: 'Book Appointment',
             },
             iconName: 'add',
             iconFamily: 'MaterialIcons',
+            childRoutes: [
+                {
+                    name: screens?.SelectDoctor,
+                    component: SelectDoctor,
+                },
+            ],
         },
         {
-            name: privateScreens?.ViewAppointments,
-            component: ViewAppointmentsScreen,
+            ...allRoutes?.ViewAppointments,
             options: {
                 headerTitle: 'View Appointments',
                 title: 'View Appointments',
@@ -66,10 +61,9 @@ export const privateRoutes: Record<UserRole, ScreenProps[] > = {
             iconFamily: 'MaterialIcons',
         },
     ],
-    'doctor': [
+    [UserRole?.DOCTOR]: [
         {
-            name: privateScreens?.AppointmentsArrived,
-            component: AppointmentsArrived,
+            ...allRoutes?.AppointmentsArrived,
             options: {
                 headerTitle: 'Appointments Arrived',
                 title: 'Appointments Arrived',
@@ -79,3 +73,4 @@ export const privateRoutes: Record<UserRole, ScreenProps[] > = {
         },
     ],
 };
+

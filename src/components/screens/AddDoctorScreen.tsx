@@ -2,7 +2,7 @@ import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-nati
 import { CustomTextInput } from '../Custom/CustomTextInput';
 import { Controller, useForm } from 'react-hook-form';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
-import { NavigationProp, style as formStyles } from '../Authentication/SigninScreen';
+import { style as formStyles } from '../Authentication/SigninScreen';
 import { addDoctor } from 'src/MockDatabase/MockAPIs/users';
 import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
@@ -10,21 +10,22 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { inputPatterns } from 'src/Validation/inputPatterns';
 import { inputTypes } from 'src/Assets/Enums/inputTypes';
-import { Days, DoctorSpecialists, Slots, UserGender } from 'src/MockDatabase/Enums/users';
+import { UserGender } from 'src/MockDatabase/Enums/users';
+import { DoctorSpecialists, Days } from 'src/MockDatabase/Enums/doctors';
 import { useEffect, useState } from 'react';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
 import { styles } from 'src/Assets/Styles/global';
 import { CustomCheckbox } from '../Custom/CustomCheckbox';
 import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
-import { SlotTimings } from 'src/MockDatabase/Types/Types';
 import { useNavigation } from '@react-navigation/native';
-import { privateScreens } from 'src/Assets/Enums/screens';
 import { fonts } from 'src/Assets/Fonts';
 import { SelectInput } from '../Custom/SelectInput';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import moment from 'moment';
 import { ErrorMessage } from '../Custom/ErrorMessage';
+import { screens } from 'src/Assets/Enums/screens';
+import { NavigationProp } from '../Types/NavigationProp';
+import { getTime } from 'src/Schema/MomentFunctions';
 
 
 interface WorkDays {
@@ -64,7 +65,7 @@ const schema = yup
             .required('Gender is required')
             .oneOf([UserGender?.MALE, UserGender?.FEMALE], 'Choose valid Gender'),
         telphone: yup.string()
-            .min(10, 'Mobile number should be valid')
+            .min(10, 'Mobile number should be 10 digits')
             .required('Mobile number is required'),
         speciality: yup.string()
             .required('Speciality is required')
@@ -127,8 +128,8 @@ export const AddDoctorScreen = () => {
 
     useEffect(() => {
         navigation?.addListener('blur', () => {
-            clearErrors();
             setDefaultValues();
+            clearErrors();
         });
     }, [navigation]);
 
@@ -179,12 +180,12 @@ export const AddDoctorScreen = () => {
                         type: ALERT_TYPE?.SUCCESS,
                     });
                     setDefaultValues();
-                    // navigation?.navigate(privateScreens?.Doctors);
+                    navigation?.navigate(screens?.DoctorsStack);
                 }
             }
             catch (err) {
                 if (err instanceof Error) {
-                    Toast?.show({
+                    Toast?. show({
                         ...toastStyle,
                         title: 'Add Doctor failed',
                         textBody: err?.message,
@@ -200,10 +201,6 @@ export const AddDoctorScreen = () => {
         setConfirmPopup(true);
     };
 
-    const getTime = (time: Date) => {
-        const momentTIme = moment(time);
-        return momentTIme.get('hour') + ':' + momentTIme.get('minute');
-    };
     const setTimeValue = (formValue: 'inTime' | 'outTime', value: Date) => {
         const minutesCheck = () => {
             const minutes = moment(value).get('minute');
@@ -214,20 +211,41 @@ export const AddDoctorScreen = () => {
             }
         };
         if (formValue === 'inTime') {
-            if (minutesCheck()) {
-                setValue(formValue, value);
-            } else {
-                Toast.show({
-                    ...toastStyle,
-                    type: ALERT_TYPE?.DANGER,
-                    textBody: 'Set minutes 00 or 30',
-                });
-            }
             setInTimePicker(false);
+            const outTime = watch('outTime');
+            let check = true;
+            if (outTime) {
+                if (moment(outTime).isAfter(value)) {
+                    check = true;
+                } else {
+                    check = false;
+                    Toast.show({
+                        ...toastStyle,
+                        type: ALERT_TYPE?.DANGER,
+                        textBody: 'Select valid In time',
+                    });
+                }
+            } else if (check) {
+                if (minutesCheck()) {
+                    setValue(formValue, value);
+                } else {
+                    Toast.show({
+                        ...toastStyle,
+                        type: ALERT_TYPE?.DANGER,
+                        textBody: 'Set minutes 00 or 30',
+                    });
+                }
+            }
         } else {
             setOutTimePicker(false);
             const inTime = watch('inTime');
-            if (inTime && moment(value).isAfter(inTime)) {
+            if (!inTime) {
+                Toast.show({
+                    ...toastStyle,
+                    type: ALERT_TYPE?.DANGER,
+                    textBody: 'Select In Time first',
+                });
+            } else if (moment(value).isAfter(inTime)) {
                 if (minutesCheck()) {
                     setValue(formValue, value);
                 } else {
@@ -276,6 +294,7 @@ export const AddDoctorScreen = () => {
                         label={'Doctor age'}
                         labelStyle={style?.label}
                         required
+                        maxLength={2}
                         placeholder={'Enter doctor age'}
                         name={'doctor_age'}
                         control={control}
@@ -301,18 +320,6 @@ export const AddDoctorScreen = () => {
                             }]}
                         errorMessage={errors?.doctor_gender?.message}
                     />
-                    <CustomTextInput
-                        required
-                        label={'Mobile number'}
-                        labelStyle={style?.label}
-                        placeholder={'Enter mobile number'}
-                        inputStyle={formStyles?.textInput}
-                        keyboardType={'numeric'}
-                        control={control}
-                        name={'telphone'}
-                        maxLength={10}
-                        errMessage={errors?.telphone?.message}
-                    />
                     <SelectInput
                         label={'Speciality'}
                         labelStyle={style?.label}
@@ -331,16 +338,29 @@ export const AddDoctorScreen = () => {
                             }]}
                         errorMessage={errors?.speciality?.message}
                     />
+                    <CustomTextInput
+                        required
+                        label={'Mobile number'}
+                        labelStyle={style?.label}
+                        placeholder={'Enter mobile number'}
+                        inputStyle={formStyles?.textInput}
+                        keyboardType={'numeric'}
+                        control={control}
+                        name={'telphone'}
+                        maxLength={10}
+                        errMessage={errors?.telphone?.message}
+                    />
                     <View>
                         <Text style={style?.label}>
                             Work Time
                             <Text style={{ color: colors?.RED }}>*</Text>
                         </Text>
                         <View style={{ padding: 10, gap: 10 }}>
-                            <View>
-                                <Text style={{ ...style?.content, textDecorationLine: 'underline' }} onPress={() => setInTimePicker(true)}>
-                                    choose In time
-                                </Text>
+                            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                                <CustomButton
+                                    onPress={() => setInTimePicker(true)}
+                                    textStyle={style?.buttonText}
+                                    type={CustomButtonTypes.NORMALBUTTON} title={'In Time'}/>
                                 <Text style={style?.content}>
                                     {watch('inTime') ? getTime(watch('inTime')) : '00:00'}
                                 </Text>
@@ -348,10 +368,11 @@ export const AddDoctorScreen = () => {
                                     <ErrorMessage
                                         message={errors?.inTime?.message} />}
                             </View>
-                            <View>
-                                <Text style={{ ...style?.content, textDecorationLine: 'underline' }} onPress={() => setOutTimePicker(true)}>
-                                    choose Out time
-                                </Text>
+                            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                                 <CustomButton
+                                    onPress={() => setOutTimePicker(true)}
+                                    textStyle={style?.buttonText}
+                                    type={CustomButtonTypes.NORMALBUTTON} title={'Out Time'}/>
                                 <Text style={style?.content}>
                                     {watch('outTime') ? getTime(watch('outTime')) : '00:00'}
                                 </Text>
@@ -471,8 +492,9 @@ const style = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 2,
     },
-    smallDropDownText: {
-        fontSize: 13,
-        fontFamily: fonts?.LIGHT,
+    buttonText: {
+        fontFamily: fonts?.REGULAR,
+        fontSize: 15,
+        textDecorationLine: 'underline',
     },
 });

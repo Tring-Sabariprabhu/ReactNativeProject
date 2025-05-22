@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { publicScreens } from 'src/Assets/Enums/screens';
+import { colors } from 'src/Assets/Enums/colors';
+import { screens } from 'src/Assets/Enums/screens';
 import { publicRoutes } from 'src/Routes/publicRoutes';
 
 export const AuthLayout = () => {
@@ -8,9 +9,12 @@ export const AuthLayout = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={publicScreens?.Signin}
+        initialRouteName={screens?.Signin}
         screenOptions={
           {
+            contentStyle: {
+              backgroundColor: colors?.WHITE,
+            },
             headerShown: false,
             animation: 'flip',
           }} >

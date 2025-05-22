@@ -1,40 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { styles } from 'src/Assets/Styles/global';
-import { getAllPatients, getDoctorsCount, getPatientsCount } from 'src/MockDatabase/MockAPIs/users';
+import { getAllPatients, getPatientsCount } from 'src/MockDatabase/MockAPIs/users';
 import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
-import { Patient, ViewUser } from '../Custom/ViewUser';
+import { ViewUser } from '../Custom/ViewUser';
 import { CustomList } from '../Custom/CustomList/CustomList';
 import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../Authentication/SigninScreen';
 import { User } from 'src/MockDatabase/Types/Types';
 import { style } from 'src/Assets/Styles/list';
 import { Image, Text, View } from 'react-native';
-import male from 'src/Assets/Images/man.png';
-import female from 'src/Assets/Images/woman.png';
-import { UserGender } from 'src/MockDatabase/Enums/users';
-import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
+import { UserGender, UserRole } from 'src/MockDatabase/Enums/users';
+import { PRIMARY_COLOR } from 'src/Assets/Enums/colors';
 import Icon from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
+import { NavigationProp } from '../Types/NavigationProp';
+import { screens } from 'src/Assets/Enums/screens';
+import { getUserImage } from 'src/Assets/Images';
 
 export const PatientsScreen = () => {
     const navigation = useNavigation<NavigationProp>();
-    const [showPopup, setShowPopup] = useState(false);
-    const [selectedPatient, setSelectedPatient] = useState<User>();
-    const [totalCount, setTotalCount] = useState<number>();
     const limit = 6;
-
-    const fetchTotalCount = (search?: string) => {
-        setTotalCount(getPatientsCount({
-            search: search,
-        }));
-    };
-
-    useEffect(() => {
-        navigation?.addListener('focus', () => {
-            fetchTotalCount();
-        });
-    }, [navigation]);
-
 
     return (
         <View style={style?.screen}>
@@ -44,9 +28,10 @@ export const PatientsScreen = () => {
                     listDirection={'column'}
                     listStyle={style?.listContainer}
                     limit={limit}
-                    totalCount={totalCount}
                     fetchListItemsCount={(props) => (
-                        fetchTotalCount(props?.searchInput)
+                        getPatientsCount({
+                            search: props?.searchInput,
+                        })
                     )}
                     fetchListItems={(props) => (
                         getAllPatients({
@@ -58,8 +43,9 @@ export const PatientsScreen = () => {
                     renderItem={({ item: patient }) => (
                         <TouchableOpacity style={style?.listItem}
                             onPress={() => {
-                                setSelectedPatient(patient);
-                                setShowPopup(true);
+                               navigation?.navigate(screens?.UserDetails, {
+                                user: patient,
+                               });
                             }}
                             key={patient?.user_id}>
                             <View style={[style?.contentView, { flex: 3 }]}>
@@ -74,22 +60,14 @@ export const PatientsScreen = () => {
                                 </View>
                             </View>
                             <View style={style?.imageView}>
-                                <Image
-                                    source={patient?.user_gender === UserGender?.MALE ? male : female}
-                                    style={[style?.image, style?.icon]} />
+                                {patient?.user_role && patient?.user_gender &&
+                                    <Image
+                                    source={getUserImage(patient?.user_role as UserRole, patient?.user_gender as UserGender)}
+                                    style={[style?.image, style?.icon]} />}
                             </View>
                         </TouchableOpacity>
                     )} />
             }
-            <CustomPopup
-                type={CustomPopupTypes?.INFO}
-                title={'Patient details'}
-                isOpen={showPopup}
-                onClose={() => setShowPopup(false)}
-                closeButtonText={'Ok'}
-                childComponent={ViewUser(selectedPatient)}
-                buttonStyle={styles?.popupButton}
-                buttonTextStyle={styles?.popupButtonText} />
         </View>
     );
 };
