@@ -10,7 +10,7 @@ import { style } from './SigninScreen';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { inputPatterns } from 'src/Validation/inputPatterns';
-import { inputTypes } from 'src/Assets/Enums/inputTypes';
+import { inputTypes } from 'src/Validation/inputPatterns';
 import { UserGender } from 'src/MockDatabase/Enums/users';
 import { SelectInput } from '../Custom/SelectInput';
 import { useState } from 'react';
@@ -139,7 +139,7 @@ export const SignupScreen = () => {
                             keyboardType={'default'}
                             control={control}
                             name={'name'}
-                            errMessage={errors?.name?.message}
+                            errorMessage={errors?.name?.message}
                         />
                         <CustomTextInput
                             required
@@ -150,7 +150,7 @@ export const SignupScreen = () => {
                             keyboardType={'email-address'}
                             control={control}
                             name={'email'}
-                            errMessage={errors?.email?.message}
+                            errorMessage={errors?.email?.message}
                         />
                         <CustomTextInput
                             required
@@ -162,7 +162,7 @@ export const SignupScreen = () => {
                             keyboardType={'numeric'}
                             control={control}
                             name={'age'}
-                            errMessage={errors?.age?.message}
+                            errorMessage={errors?.age?.message}
                         />
                         <SelectInput
                             label={'Gender'}
@@ -194,7 +194,7 @@ export const SignupScreen = () => {
                                 control={control}
                                 name={'telphone'}
                                 maxLength={10}
-                                errMessage={errors?.telphone?.message}
+                                errorMessage={errors?.telphone?.message}
                             />
                         <CustomTextInput
                             required
@@ -206,7 +206,7 @@ export const SignupScreen = () => {
                             keyboardType={'default'}
                             control={control}
                             name={'password'}
-                            errMessage={errors?.password?.message}
+                            errorMessage={errors?.password?.message}
                         />
                         <CustomTextInput
                             required
@@ -218,7 +218,7 @@ export const SignupScreen = () => {
                             keyboardType={'default'}
                             control={control}
                             name={'confirm_password'}
-                            errMessage={errors?.confirm_password?.message}
+                            errorMessage={errors?.confirm_password?.message}
                         />
                         <CustomButton
                             disableMode={disableMode}

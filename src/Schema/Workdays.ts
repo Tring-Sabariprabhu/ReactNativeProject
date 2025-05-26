@@ -1,4 +1,4 @@
-import { Days } from 'src/MockDatabase/Enums/users';
+import { Days } from 'src/MockDatabase/Enums/doctors';
 
 const DaysList = [Days?.monday, Days?.tuesday, Days?.wednesday, Days?.thursday, Days?.friday, Days?.saturday, Days?.sunday];
 

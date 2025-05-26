@@ -14,7 +14,7 @@ import { DrawerContent } from 'src/Components/Custom/DrawerContent';
 import { HomeScreen } from 'src/Components/Screens/HomeScreen';
 import { screens } from 'src/Assets/Enums/screens';
 import { ScreenProps } from 'src/Components/Types/ScreenProps';
-
+import { style as drawerStyle } from 'src/Components/Custom/DrawerContent';
 interface DrawerIconProps {
     color: string
     size: number
@@ -56,34 +56,21 @@ export const DashBaordLayout = () => {
                 drawerContent={(props) => <DrawerContent {...props} />}
                 screenOptions={
                     {
-                        drawerContentContainerStyle: {
-                            backgroundColor: colors?.WHITE,
-                        },
-                        headerTitleStyle: {
-                            fontFamily: fonts?.MEDIUM,
-                            fontSize: 22,
-                        },
-                        drawerLabelStyle: {
-                            fontFamily: fonts?.LIGHT,
-                            fontSize: 20,
-                        },
-                        headerShadowVisible: false,
-                        headerStyle: {
-                            borderBottomWidth: 1,
-                        },
-                        drawerItemStyle: {
-                            borderRadius: 10,
-                        },
+                        drawerActiveBackgroundColor: colors?.WHITE,
                         drawerActiveTintColor: colors?.DARK_BLUE,
+                        headerShadowVisible: false,
+                        headerStyle: drawerStyle?.headerStyle,
+                        headerTitleStyle: drawerStyle?.headerTitleStyle,
+                        drawerLabelStyle: drawerStyle?.drawerLabelStyle,
+                        drawerItemStyle: drawerStyle?.drawerItemStyle,
                     }}>
                 <Drawer.Screen name={screens?.Home}
                     component={HomeScreen}
                     options={
                         {
                             title: 'Dashboard',
-                            drawerIcon: (props) => (
-                                <DrawerIcon {...props} iconName={'home'} iconFamily={'MaterialIcons'} />
-                            ),
+                            drawerIcon: (props) =>
+                                <DrawerIcon {...props} iconName={'home'} iconFamily={'MaterialIcons'} />,
                         }
                     } />
                 {
@@ -95,9 +82,8 @@ export const DashBaordLayout = () => {
                             options={
                                 {
                                     ...screen?.options,
-                                    drawerIcon: (props) => (
-                                        <DrawerIcon {...props} iconName={screen?.iconName} key={index} iconFamily={screen?.iconFamily} />
-                                    ),
+                                    drawerIcon: (props) =>
+                                        <DrawerIcon {...props} iconName={screen?.iconName} key={index} iconFamily={screen?.iconFamily} />,
                                 }
                             } />
                     ))

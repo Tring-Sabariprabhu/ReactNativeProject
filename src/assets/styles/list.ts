@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 import { colors } from '../Enums/colors';
 import { fonts } from '../Fonts';
 import { styles } from './global';
+import { fontSizes } from './fontSizes';
 
 export const style = StyleSheet.create({
     screen: {
@@ -10,13 +11,14 @@ export const style = StyleSheet.create({
     },
     listContainer: {
         backgroundColor: colors?.WHITE,
-        paddingVertical: 20,
-        paddingHorizontal: 15,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
         gap: 16,
     },
-    row: {
+    rowView: {
         flexDirection: 'row',
         alignItems: 'center',
+        gap: 5,
     },
     capitalizedContent: {
         ...styles?.paragraph,
@@ -24,46 +26,42 @@ export const style = StyleSheet.create({
     },
     listItem: {
         ...styles?.paragraph,
-        paddingHorizontal: 20,
         borderRadius: 10,
+        paddingHorizontal: 20,
         flexDirection: 'row',
         boxShadow: `0px 0px 2px 2px ${colors?.GRAY}`,
         borderColor: colors?.LIGHT_GRAY,
         backgroundColor: colors?.WHITE,
     },
     listItemHeading: {
-        fontSize: 20,
         fontFamily: fonts?.MEDIUM,
+        textTransform: 'capitalize',
+        fontSize: fontSizes?.heading,
     },
     listItemContent: {
-        textTransform: 'capitalize',
-        fontSize: 18,
-        fontFamily: fonts?.REGULAR,
+        fontFamily: fonts?.LIGHT,
     },
     listItemContent2: {
         textTransform: 'capitalize',
-        fontSize: 16,
         fontFamily: fonts?.LIGHT,
     },
     listItemContent3: {
-        paddingVertical: 5,
+        fontSize: fontSizes?.content,
         opacity: 0.6,
-        fontSize: 14,
         fontFamily: fonts?.LIGHT,
     },
     contentView:{
-        flex: 3,
-        gap: 5,
+        flex: 2,
+        gap: 8,
         justifyContent: 'center',
         alignItems: 'flex-start',
         paddingVertical: 10,
     },
     view:{
         flexDirection: 'row',
-        gap: 6,
+        gap: 5,
         width: '100%',
         justifyContent: 'flex-start',
-        alignItems: 'center',
     },
     imageView: {
         flex: 2,
@@ -74,7 +72,7 @@ export const style = StyleSheet.create({
     image: {
         width: 85,
         height: 85,
-        opacity: 0.15,
+        opacity: 0.2,
     },
     icon: {
         opacity: 0.4,

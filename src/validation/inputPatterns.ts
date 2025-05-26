@@ -1,8 +1,13 @@
-import { inputTypes } from 'src/Assets/Enums/inputTypes';
 
 interface InputPatternProps{
     type: inputTypes,
 }
+export enum inputTypes {
+    NAME = 'name',
+    PASSWORD = 'password',
+    EMAIL = 'email',
+}
+
 export const inputPatterns = ({type}: InputPatternProps)=>{
     switch(type){
         case inputTypes?.NAME:

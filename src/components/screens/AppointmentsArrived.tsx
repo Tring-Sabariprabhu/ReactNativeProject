@@ -1,17 +1,33 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { styles } from 'src/Assets/Styles/global';
+import { CustomSwipeableCardList } from '../Custom/CustomSwipeableCardList/CustomSwipeableCardList';
 import { colors } from 'src/Assets/Enums/colors';
 import LottieView from 'lottie-react-native';
+import { getAppointmentsForDoctor } from 'src/MockDatabase/MockAPIs/appointment';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/Redux/store';
+import { getUserImage } from 'src/Assets/Images';
+import { UserRole } from 'src/MockDatabase/Enums/users';
+import { fonts } from 'src/Assets/Fonts';
+import { fontSizes } from 'src/Assets/Styles/fontSizes';
 
 export const AppointmentsArrived = () => {
     const user = useSelector((state: RootState) => state?.user);
+    const [appointments, setAppointments] = useState<any[]>();
+    useEffect(() => {
+        if (user?.user_id) {
+            const records = getAppointmentsForDoctor({
+                doctor_id: user?.user_id,
+            });
+            console.log(records);
+            setAppointments(records);
+        }
+    }, [user]);
     const NoResultsView = (
         <View style={style?.noResultsView}>
             <LottieView
-                source={require('src/Assets/AnimationFiles/NoResults.json')}
+                source={require('src/Assets/AnimationFiles/noResultsFound.json')}
                 style={style?.animatiedImage} autoPlay />
             <Text style={style?.noResultsContent}>
                 No Appointments found
@@ -20,7 +36,7 @@ export const AppointmentsArrived = () => {
     );
     return (
         <View style={style?.screen}>
-                {NoResultsView}
+           {NoResultsView}
         </View>
     );
 };
@@ -61,8 +77,9 @@ const style = StyleSheet.create({
         height: 180,
     },
     noResultsContent: {
-        ...styles?.paragraph,
+        fontFamily: fonts?.REGULAR,
         color: colors?.DARK_BLUE,
+        fontSize: fontSizes?.heading,
     },
     patientImage: {
         width: 100,

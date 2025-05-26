@@ -3,7 +3,6 @@ import { SigninScreen } from 'src/Components/Authentication/SigninScreen';
 import { SignupScreen } from 'src/Components/Authentication/SignupScreen';
 import { AddDoctorScreen } from 'src/Components/Screens/AddDoctorScreen';
 import { AppointmentsArrived } from 'src/Components/Screens/AppointmentsArrived';
-import { SelectDoctor } from 'src/Components/Screens/BookAppointmentStack/SelectDoctor';
 import { UserDetails } from 'src/Components/Screens/UserDetails';
 import { DoctorsStack } from 'src/Navigation/DoctorsStack';
 import { HomeScreen } from 'src/Components/Screens/HomeScreen';
@@ -12,6 +11,7 @@ import { ViewAppointmentsScreen } from 'src/Components/Screens/ViewAppointmentsS
 import { BookAppointmentStack } from 'src/Navigation/BookAppointmentStack';
 import { DoctorsScreen } from 'src/Components/Screens/DoctorsScreen';
 import { PatientsStack } from 'src/Navigation/PatientsStack';
+import { BookAppointment } from 'src/Components/Screens/BookAppointment';
 
 export const allRoutes = {
     [screens?.Signin]: {
@@ -46,13 +46,13 @@ export const allRoutes = {
         name: screens?.AddDoctor,
         component: AddDoctorScreen,
     },
-    [screens?.BookAppointment]: {
-        name: screens?.BookAppointment,
+    [screens?.BookAppointmentStack]: {
+        name: screens?.BookAppointmentStack,
         component: BookAppointmentStack,
     },
-    [screens?.SelectDoctor]: {
-        name: screens?.SelectDoctor,
-        component: SelectDoctor,
+      [screens?.BookAppointment]: {
+        name: screens?.BookAppointment,
+        component: BookAppointment,
     },
     [screens?.UserDetails]: {
         name: screens?.UserDetails,

@@ -10,8 +10,7 @@ import { useDispatch } from 'react-redux';
 import { signin, getCurrentUser } from 'src/MockDatabase/MockAPIs/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { inputPatterns } from 'src/Validation/inputPatterns';
-import { inputTypes } from 'src/Assets/Enums/inputTypes';
+import { inputPatterns, inputTypes } from 'src/Validation/inputPatterns';
 import { toastStyle } from 'src/Assets/Styles/toast';
 import { styles } from 'src/Assets/Styles/global';
 import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
@@ -19,6 +18,8 @@ import { useState } from 'react';
 import { CustomTextInput } from '../Custom/CustomTextInput';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
 import { screens } from 'src/Assets/Enums/screens';
+import { fontSizes } from 'src/Assets/Styles/fontSizes';
+import { NavigationProp } from '../Types/NavigationProp';
 
 interface FormValues {
     email: string;
@@ -98,9 +99,6 @@ export const SigninScreen = () => {
                             <Text style={style?.heading}>
                                 Let's Sign you in.
                             </Text>
-                            <Text style={style?.content}>
-                                Please Sign in to continue
-                            </Text>
                         </View>
                         <CustomTextInput
                             required
@@ -113,7 +111,7 @@ export const SigninScreen = () => {
                             control={control}
                             name={'email'}
                             value={watch('email')}
-                            errMessage={errors?.email?.message}
+                            errorMessage={errors?.email?.message}
                         />
                         <CustomTextInput
                             required
@@ -127,7 +125,7 @@ export const SigninScreen = () => {
                             control={control}
                             name={'password'}
                             value={watch('password')}
-                            errMessage={errors?.password?.message}
+                            errorMessage={errors?.password?.message}
                         />
                         <CustomButton
                             disableMode={disableMode}
@@ -167,8 +165,8 @@ export const style = StyleSheet.create({
         alignItems: 'center',
     },
     image: {
-        width: 200,
-        height: 200,
+        width: 250,
+        height: 250,
     },
     container: {
         flex: 1,
@@ -185,57 +183,46 @@ export const style = StyleSheet.create({
         fontFamily: fonts?.MEDIUM,
         color: PRIMARY_COLOR,
         opacity: 0.8,
+        fontSize: fontSizes?.bigHeading,
         textAlign: 'left',
-        fontSize: 28,
-    },
-    content: {
-        paddingStart: 5,
-        fontFamily: fonts?.LIGHT,
-        opacity: 0.5,
-        fontSize: 12,
     },
     inputContainer: {
         gap: 10,
     },
     textInput: {
         ...styles?.textInput,
-        fontSize: 16,
         paddingVertical: 12,
         paddingHorizontal: 15,
     },
     label: {
         ...styles?.label,
-        fontSize: 16,
         paddingStart: 10,
-        opacity: 0.7,
+        fontSize: fontSizes?.content,
     },
     button: {
-        ...styles?.button,
         borderRadius: 8,
-        paddingVertical: 6,
+        paddingVertical: 8,
         backgroundColor: PRIMARY_COLOR,
     },
     buttonTextStyle: {
+        ...styles?.buttonText,
         color: colors?.WHITE,
-        fontFamily: fonts?.MEDIUM,
-        fontSize: 24,
         fontWeight: 500,
+        fontSize: fontSizes?.heading,
         textAlign: 'center',
     },
     footer: {
-        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 10,
     },
     footerText: {
         fontFamily: fonts?.REGULAR,
-        fontSize: 16,
         opacity: 0.6,
     },
     navigator: {
         fontFamily: fonts?.REGULAR,
-        fontSize: 18,
         color: colors?.DARK_BLUE,
+        fontSize: fontSizes?.bigContent,
     },
 });

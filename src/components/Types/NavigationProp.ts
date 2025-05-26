@@ -6,12 +6,14 @@ type RootStackParamList = {
     Signup: undefined;
     Home: undefined;
     AddDoctor: undefined;
-    DoctorsStack: undefined
-    PatientsStack: undefined
-    BookAppointment: undefined
-    SelectDoctor: undefined
+    DoctorsStack: undefined;
+    PatientsStack: undefined;
+    Doctors: undefined;
+    Patients: undefined;
+    BookAppointment: undefined;
+    SelectDoctor: undefined;
     UserDetails: {
-        user: User
+        user: User;
     }
 };
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

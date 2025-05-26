@@ -7,6 +7,7 @@ import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
 import { fonts } from 'src/Assets/Fonts';
 import { Loader } from '../Custom/Loader';
 import LottieView from 'lottie-react-native';
+import { fontSizes } from 'src/Assets/Styles/fontSizes';
 
 export const HomeScreen = () => {
     const user = useSelector((state: RootState) => state?.user);
@@ -17,7 +18,7 @@ export const HomeScreen = () => {
                 user?.user_role ?
                     <View>
                         <LottieView
-                            source={require('src/Assets/AnimationFiles/doctor.json')}
+                            source={require('src/Assets/AnimationFiles/home.json')}
                             autoPlay
                             style={style?.animatedImage} />
                         <View style={style?.container}>
@@ -25,7 +26,7 @@ export const HomeScreen = () => {
                                 Welcome
                             </Text>
                             {user?.user_name &&
-                                <Text style={[styles?.paragraph, {textTransform: 'capitalize'}]}>
+                                <Text style={style?.content}>
                                     {user?.user_name},
                                 </Text>}
                         </View>
@@ -46,13 +47,18 @@ const style = StyleSheet.create({
     heading: {
         fontFamily: fonts?.MEDIUM,
         color: PRIMARY_COLOR,
-        fontSize: 30,
+        fontSize: fontSizes?.bigHeading,
+    },
+    content: {
+        ...styles?.paragraph,
+        textTransform: 'capitalize',
     },
     container: {
         alignItems: 'center',
+        paddingHorizontal: 30,
     },
     animatedImage: {
-        width: 350,
-        height: 350,
+        width: 300,
+        height: 300,
     },
 });

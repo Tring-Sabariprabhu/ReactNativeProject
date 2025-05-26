@@ -19,7 +19,9 @@ export const CustomCheckbox = ({ text, iconSize, iconColor, onChange, isChecked,
                 size={iconSize || 15}
                 color={iconColor || colors?.BLACK}
                 onPress={() => onChange(!isChecked)} />
-            <Text style={[style?.textStyle, textStyle]}>{text}</Text>
+            <Text style={[style?.textStyle, textStyle]} onPress={() => onChange(!isChecked)}>
+                {text}
+            </Text>
         </View>
     );
 };
@@ -29,6 +31,5 @@ const style = StyleSheet.create({
         gap: 5,
     },
     textStyle: {
-        fontSize: 16,
     },
 });

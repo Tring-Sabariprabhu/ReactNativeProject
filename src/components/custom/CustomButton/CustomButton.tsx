@@ -1,4 +1,4 @@
-import { Text, TextStyle, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { Text, TextStyle, TouchableHighlight, TouchableOpacity, ViewStyle } from 'react-native';
 export enum CustomButtonTypes {
     NORMALBUTTON = 'NORMALBUTTON',
     HIGHLIGHTBUTTON = 'HIGHLIGHTBUTTON',
@@ -7,7 +7,7 @@ export enum CustomButtonTypes {
 export interface NormalButtonProps {
     title: string
     disableMode?: boolean
-    buttonStyle?: Object
+    buttonStyle?: ViewStyle
     textStyle?: TextStyle
     onPress?: () => void
     onLongPress?: () => void

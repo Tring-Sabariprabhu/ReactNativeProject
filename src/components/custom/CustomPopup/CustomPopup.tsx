@@ -38,6 +38,7 @@ interface CustomPopupProps {
     buttonTextStyle?: TextStyle
     successButtonText?: string
     onSuccess?: () => void
+    primaryColor?: string
 }
 export const CustomPopup = ({ type,
     title,
@@ -51,16 +52,17 @@ export const CustomPopup = ({ type,
     childComponent,
     buttonStyle,
     buttonTextStyle,
+    primaryColor,
 }: CustomPopupProps) => {
-
+    const pickedColor = primaryColor || PopupColors[type];
     return (
         <Modal
             isVisible={isOpen}
             style={style?.modal}>
-            <View style={{ ...style?.container, borderColor: PopupColors[type] }}>
+            <View style={{ ...style?.container, borderColor: pickedColor }}>
                 {title &&
                     <View style={style?.heading}>
-                        <Icon name={IconNames[type]} color={PopupColors[type]} size={55} style={style?.iconStyle} />
+                        <Icon name={IconNames[type]} color={pickedColor} size={55} style={style?.iconStyle} />
                         <Text style={{ ...style?.headingText, ...titleStyle }}>
                             {title}
                         </Text>
@@ -74,7 +76,7 @@ export const CustomPopup = ({ type,
                 {childComponent}
                 <View style={style?.modalFooter}>
                     <CustomButton
-                        buttonStyle={{ ...style?.button, ...buttonStyle, backgroundColor: PopupColors[type] }}
+                        buttonStyle={{ ...style?.button, ...buttonStyle, backgroundColor: pickedColor }}
                         textStyle={{ ...style?.buttonTextStyle, ...buttonTextStyle }}
                         type={CustomButtonTypes.OPASITYBUTTON}
                         title={closeButtonText}
@@ -82,7 +84,7 @@ export const CustomPopup = ({ type,
                     {onSuccess &&
                         successButtonText &&
                         <CustomButton
-                            buttonStyle={{ ...style?.button, ...buttonStyle, backgroundColor: PopupColors[type] }}
+                            buttonStyle={{ ...style?.button, ...buttonStyle, backgroundColor: pickedColor }}
                             textStyle={{ ...style?.buttonTextStyle, ...buttonTextStyle }}
                             type={CustomButtonTypes.OPASITYBUTTON}
                             title={successButtonText}
@@ -114,7 +116,6 @@ const style = StyleSheet.create({
     headingText: {
         fontFamily: fonts?.MEDIUM,
         fontWeight: 600,
-        fontSize: 20,
     },
     container: {
         paddingVertical: 10,
@@ -139,6 +140,5 @@ const style = StyleSheet.create({
     },
     buttonTextStyle: {
         color: colors?.WHITE,
-        fontSize: 18,
     },
 });

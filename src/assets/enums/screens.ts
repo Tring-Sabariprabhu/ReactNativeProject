@@ -6,6 +6,7 @@ export enum screens {
     PatientsStack = 'PatientsStack',
     Doctors = 'Doctors',
     Patients = 'Patients',
+    BookAppointmentStack = 'BookAppointmentStack',
     BookAppointment = 'BookAppointment',
     ViewAppointments = 'ViewAppointments',
     AddDoctor = 'AddDoctor',

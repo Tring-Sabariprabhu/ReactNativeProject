@@ -61,20 +61,18 @@ export const DoctorsScreen = () => {
                                 <Text style={[style?.listItemHeading, { color: PRIMARY_COLOR }]}>
                                     Dr.
                                 </Text>
-                                <Text style={[style?.listItemContent, { color: PRIMARY_COLOR }]} numberOfLines={1}>
+                                <Text style={[style?.listItemHeading, { color: PRIMARY_COLOR }]} numberOfLines={1}>
                                     {doctor?.user_name}
                                 </Text>
                             </View>
-                            <View style={style?.view}>
-                                <Text style={[style?.listItemContent2]}>
-                                    {doctor?.speciality}
-                                </Text>
-                            </View>
-                            <View style={style?.view}>
+                            <Text style={[style?.listItemContent2]}>
+                                {doctor?.speciality}
+                            </Text>
+                            <View style={style?.rowView}>
                                 <Icon name={'today'} size={18} style={style?.icon} />
                                 {
                                     doctor?.work_days &&
-                                    <Text style={[style?.listItemContent3, { fontSize: 15 }]}>
+                                    <Text style={[style?.listItemContent3]}>
                                         {getWorkdaysFormat(doctor?.work_days)}
                                     </Text>
                                 }
@@ -86,8 +84,8 @@ export const DoctorsScreen = () => {
                                 style={style?.image}
                             />
                             {
-                                <View style={style?.view}>
-                                    <Icon name={'access-time'} size={18} style={style?.icon} />
+                                <View style={style?.rowView}>
+                                    <Icon name={'access-time'} size={style?.listItemContent3?.fontSize} style={style?.icon} />
                                     <Text style={[style?.listItemContent3]}>
                                         {
                                             (doctor?.inTime && doctor?.outTime) ?

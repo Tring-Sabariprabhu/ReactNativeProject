@@ -37,19 +37,13 @@ export const privateRoutes: Record<UserRole, ScreenProps[]> = {
     ],
     [UserRole?.PATIENT]: [
         {
-            ...allRoutes?.BookAppointment,
+            ...allRoutes?.BookAppointmentStack,
             options: {
                 headerTitle: 'Book Appointment',
                 title: 'Book Appointment',
             },
-            iconName: 'add',
+            iconName: 'add-card',
             iconFamily: 'MaterialIcons',
-            childRoutes: [
-                {
-                    name: screens?.SelectDoctor,
-                    component: SelectDoctor,
-                },
-            ],
         },
         {
             ...allRoutes?.ViewAppointments,

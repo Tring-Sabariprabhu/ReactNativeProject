@@ -109,14 +109,11 @@ const style = StyleSheet.create({
     label: {
         ...styles?.capitalizedContent,
         fontFamily: fonts?.MEDIUM,
-        fontSize: 16,
     },
     content: {
         ...styles?.paragraph,
-        fontSize: 16,
     },
     contentWithCapitalized: {
         ...styles?.capitalizedContent,
-        fontSize: 16,
     },
 });

@@ -7,7 +7,7 @@ import visibleIcon from 'src/Assets/Images/visible.png';
 import visibleHiddenIcon from 'src/Assets/Images/hide.png';
 import { StyleSheet } from 'react-native';
 
-interface TextInputFieldProps {
+interface TextInputFieldProps<T> {
     name?: string;
     label?: string;
     labelStyle?: TextStyle;
@@ -17,9 +17,9 @@ interface TextInputFieldProps {
     control?: Control<any>;
     placeholder?: string;
     keyboardType: 'default' | 'email-address' | 'phone-pad' | 'numeric';
-    errMessage?: string;
+    errorMessage?: string;
     autoFocus?: boolean;
-    value?: string;
+    value?: T;
     onChangeText?: (value: string) => void;
     icon?: ReactElement;
     iconStyle?: ViewStyle;
@@ -29,7 +29,7 @@ interface TextInputFieldProps {
     maxLength?: number;
 }
 
-export const CustomTextInput = ({
+export const CustomTextInput = <T,>({
     viewContainerStyle,
     name,
     label,
@@ -41,9 +41,9 @@ export const CustomTextInput = ({
     placeholder,
     inputStyle,
     keyboardType,
-    errMessage,
+    errorMessage,
     editable = true,
-    isSecureInput = false }: TextInputFieldProps) => {
+    isSecureInput = false }: TextInputFieldProps<T>) => {
     const [visible, setVisible] = useState<boolean>(false);
 
     const handleChange = (text: string, onChange: (...event: any[]) => void) => {
@@ -104,8 +104,8 @@ export const CustomTextInput = ({
                         />}
             </View>
             {
-                errMessage &&
-                <ErrorMessage message={errMessage} />
+                errorMessage &&
+                <ErrorMessage message={errorMessage} />
             }
         </View>
     );
@@ -118,7 +118,7 @@ const textInputStyle = StyleSheet.create({
         height: 30,
         position: 'absolute',
         right: 20,
-        top: 12,
+        top: 8,
         zIndex: 10,
     },
     icon: {

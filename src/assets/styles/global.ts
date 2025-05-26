@@ -1,6 +1,7 @@
 import { StatusBar, StyleSheet } from 'react-native';
 import { fonts } from '../Fonts';
 import { colors } from '../Enums/colors';
+import { fontSizes } from './fontSizes';
 
 export const styles = StyleSheet?.create({
     screen: {
@@ -18,24 +19,23 @@ export const styles = StyleSheet?.create({
     },
     paragraph: {
         fontFamily: fonts?.LIGHT,
-        fontSize: 18,
+        fontSize: fontSizes?.content,
     },
     highlightedParagraph: {
-        fontSize: 18,
         fontFamily: fonts?.MEDIUM,
     },
     capitalizedContent: {
         fontFamily: fonts?.LIGHT,
-        fontSize: 18,
         textTransform: 'capitalize',
     },
     error: {
         color: colors?.RED,
-        paddingStart: 10,
+        paddingTop: 5,
+        paddingLeft: 10,
         fontFamily: fonts?.LIGHT,
-        fontSize: 14,
+        fontSize: fontSizes?.content,
     },
-    button: {
+    buttonText: {
         fontFamily: fonts?.MEDIUM,
     },
     popupButton: {
@@ -44,21 +44,20 @@ export const styles = StyleSheet?.create({
     },
     popupButtonText: {
         fontFamily: fonts?.MEDIUM,
-        fontSize: 20,
+        fontSize: fontSizes?.heading,
     },
      dropDown: {
         boxShadow: `1px 1px 1px 2px ${colors?.LIGHT_GRAY}`,
         borderRadius: 8,
+        paddingHorizontal: 5,
     },
     dropDownItem: {
+        fontSize: fontSizes?.content,
         fontFamily: fonts?.REGULAR,
-        fontSize: 15,
-        padding: 5,
     },
     activeDropDownItem:{
         color: colors?.BLUE,
         fontFamily: fonts?.REGULAR,
-        fontSize: 18,
         padding: 5,
     },
 });

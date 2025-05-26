@@ -1,11 +1,6 @@
-import { useState } from 'react';
-import { styles } from 'src/Assets/Styles/global';
 import { getAllPatients, getPatientsCount } from 'src/MockDatabase/MockAPIs/users';
-import { CustomPopup, CustomPopupTypes } from '../Custom/CustomPopup/CustomPopup';
-import { ViewUser } from '../Custom/ViewUser';
 import { CustomList } from '../Custom/CustomList/CustomList';
 import { useNavigation } from '@react-navigation/native';
-import { User } from 'src/MockDatabase/Types/Types';
 import { style } from 'src/Assets/Styles/list';
 import { Image, Text, View } from 'react-native';
 import { UserGender, UserRole } from 'src/MockDatabase/Enums/users';
@@ -43,16 +38,16 @@ export const PatientsScreen = () => {
                     renderItem={({ item: patient }) => (
                         <TouchableOpacity style={style?.listItem}
                             onPress={() => {
-                               navigation?.navigate(screens?.UserDetails, {
-                                user: patient,
-                               });
+                                navigation?.navigate(screens?.UserDetails, {
+                                    user: patient,
+                                });
                             }}
                             key={patient?.user_id}>
                             <View style={[style?.contentView, { flex: 3 }]}>
                                 <Text style={[style?.listItemContent, { color: PRIMARY_COLOR }]}>
                                     {patient?.user_name}
                                 </Text>
-                                <View style={style?.view}>
+                                <View style={style?.rowView}>
                                     <Icon name={'phone-call'} size={16} style={style?.icon} />
                                     <Text style={style?.listItemContent2}>
                                         {patient?.telphone}
@@ -62,8 +57,8 @@ export const PatientsScreen = () => {
                             <View style={style?.imageView}>
                                 {patient?.user_role && patient?.user_gender &&
                                     <Image
-                                    source={getUserImage(patient?.user_role as UserRole, patient?.user_gender as UserGender)}
-                                    style={[style?.image, style?.icon]} />}
+                                        source={getUserImage(patient?.user_role as UserRole, patient?.user_gender as UserGender)}
+                                        style={style?.image} />}
                             </View>
                         </TouchableOpacity>
                     )} />

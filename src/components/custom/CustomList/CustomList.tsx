@@ -135,7 +135,7 @@ export const CustomList = <T,>({ listDirection, listStyle, renderItem, limit, fe
             {(!loading) && totalCount.current === 0 &&
                 <View style={{ flex: 1, alignItems: 'center' }}>
                     <View>
-                        <Text style={{ fontFamily: fonts?.LIGHT, fontSize: 20 }}>
+                        <Text style={{ fontFamily: fonts?.LIGHT}}>
                             No Users found
                         </Text>
                     </View>
@@ -150,7 +150,6 @@ const style = StyleSheet.create({
     },
     searchBox: {
         ...styles?.textInput,
-        fontSize: 16,
         paddingHorizontal: 40,
     },
     searchIcon: {

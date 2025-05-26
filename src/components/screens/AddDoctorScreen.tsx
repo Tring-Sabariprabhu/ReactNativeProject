@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import { CustomTextInput } from '../Custom/CustomTextInput';
 import { Controller, useForm } from 'react-hook-form';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
@@ -9,7 +9,7 @@ import { toastLengthShort, toastStyle } from 'src/Assets/Styles/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { inputPatterns } from 'src/Validation/inputPatterns';
-import { inputTypes } from 'src/Assets/Enums/inputTypes';
+import { inputTypes } from 'src/Validation/inputPatterns';
 import { UserGender } from 'src/MockDatabase/Enums/users';
 import { DoctorSpecialists, Days } from 'src/MockDatabase/Enums/doctors';
 import { useEffect, useState } from 'react';
@@ -277,7 +277,7 @@ export const AddDoctorScreen = () => {
                         control={control}
                         inputStyle={formStyles?.textInput}
                         keyboardType={'default'}
-                        errMessage={errors?.doctor_name?.message}
+                        errorMessage={errors?.doctor_name?.message}
                     />
                     <CustomTextInput
                         label={'Doctor email'}
@@ -288,7 +288,7 @@ export const AddDoctorScreen = () => {
                         control={control}
                         inputStyle={formStyles?.textInput}
                         keyboardType={'email-address'}
-                        errMessage={errors?.email?.message}
+                        errorMessage={errors?.email?.message}
                     />
                     <CustomTextInput
                         label={'Doctor age'}
@@ -300,7 +300,7 @@ export const AddDoctorScreen = () => {
                         control={control}
                         inputStyle={formStyles?.textInput}
                         keyboardType={'numeric'}
-                        errMessage={errors?.doctor_age?.message}
+                        errorMessage={errors?.doctor_age?.message}
                     />
                     <SelectInput
                         label={'Gender'}
@@ -348,7 +348,7 @@ export const AddDoctorScreen = () => {
                         control={control}
                         name={'telphone'}
                         maxLength={10}
-                        errMessage={errors?.telphone?.message}
+                        errorMessage={errors?.telphone?.message}
                     />
                     <View>
                         <Text style={style?.label}>
@@ -448,7 +448,7 @@ export const AddDoctorScreen = () => {
 
 const style = StyleSheet.create({
     screen: {
-        ...styles?.screen,
+        flex: 1,
         backgroundColor: colors?.WHITE,
     },
     row: {
@@ -456,8 +456,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
     },
     container: {
-        paddingVertical: 20,
-        paddingHorizontal: 10,
+        padding: 30,
         gap: 40,
     },
     workDaysContainer: {
@@ -470,11 +469,9 @@ const style = StyleSheet.create({
     },
     label: {
         fontFamily: fonts?.REGULAR,
-        fontSize: 16,
         textTransform: 'capitalize',
     },
     content: {
-        fontSize: 15,
         fontFamily: fonts?.LIGHT,
         textTransform: 'capitalize',
     },
@@ -493,8 +490,7 @@ const style = StyleSheet.create({
         borderWidth: 2,
     },
     buttonText: {
-        fontFamily: fonts?.REGULAR,
-        fontSize: 15,
+        ...styles?.buttonText,
         textDecorationLine: 'underline',
     },
 });
