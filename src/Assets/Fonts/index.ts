@@ -1,0 +1,16 @@
+export const fonts = {
+    LIGHT: 'Poppins-Light',
+    MEDIUM: 'Poppins-Medium',
+    BOLD: 'Poppins-Bold',
+    ITALIC: 'Poppins-Italic',
+    REGULAR: 'Poppins-Regular',
+    THIN: 'Poppins-Thin',
+    EXTRABOLD: 'Poppins-ExtraBold',
+    BOLDITALIC: 'Poppins-Bolditalic',
+    EXTRALIGHT: 'Poppins-ExtraLight',
+    LIGHTITALIC: 'Poppins-LightItalic',
+    MEDIUMITALIC: 'Poppins-MediumItalic',
+    SEMIBOLD: 'Poppins-SemiBold',
+    SEMIITALIC: 'Poppins-SemiBoldItalic',
+    THINITALIC: 'Poppins-ThinItalic',
+};

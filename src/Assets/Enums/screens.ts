@@ -1,0 +1,16 @@
+export enum screens {
+    Signin = 'Signin',
+    Signup = 'Signup',
+    Home = 'Home',
+    DoctorsStack = 'DoctorsStack',
+    PatientsStack = 'PatientsStack',
+    Doctors = 'Doctors',
+    Patients = 'Patients',
+    BookAppointmentStack = 'BookAppointmentStack',
+    BookAppointment = 'BookAppointment',
+    ViewAppointments = 'ViewAppointments',
+    AddDoctor = 'AddDoctor',
+    AppointmentsArrived = 'AppointmentsArrived',
+    SelectDoctor = 'SelectDoctor',
+    UserDetails = 'UserDetails',
+}

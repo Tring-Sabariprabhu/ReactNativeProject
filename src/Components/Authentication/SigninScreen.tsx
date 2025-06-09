@@ -1,0 +1,228 @@
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import logo from '../../Assets/Images/login_background.jpg';
+import { useNavigation } from '@react-navigation/native';
+import { fonts } from '../../Assets/Fonts';
+import { useForm } from 'react-hook-form';
+import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setUser } from 'src/Redux/userSlice';
+import { useDispatch } from 'react-redux';
+import { signin, getCurrentUser } from 'src/MockDatabase/MockAPIs/auth';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { inputPatterns, inputTypes } from 'src/Validation/inputPatterns';
+import { toastStyle } from 'src/Assets/Styles/toast';
+import { styles } from 'src/Assets/Styles/global';
+import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
+import { useState } from 'react';
+import { CustomTextInput } from '../Custom/CustomTextInput';
+import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
+import { screens } from 'src/Assets/Enums/screens';
+import { fontSizes } from 'src/Assets/Styles/fontSizes';
+import { NavigationProp } from '../Types/navigationProp';
+
+interface FormValues {
+    email: string;
+    password: string;
+}
+const schema = yup
+    .object()
+    .shape({
+        email: yup.string()
+            .required('Email is required')
+            .matches(inputPatterns({ type: inputTypes?.EMAIL }), 'Email should be valid'),
+        password: yup.string()
+            .required('Password is required')
+            .min(8, 'Password should be 8 characters'),
+    });
+
+export const SigninScreen = () => {
+
+    const navigation = useNavigation<NavigationProp>();
+    const dispatch = useDispatch();
+
+    const { control, handleSubmit, formState: { errors }, watch, setError } = useForm<FormValues>({
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+        resolver: yupResolver(schema),
+    });
+    const onSubmit = async (formdata: FormValues) => {
+        try {
+            setDisableMode(true);
+            const { email, password } = formdata;
+            const data = signin({ email: email?.toLowerCase(), password: password });
+            setDisableMode(false);
+            if (data?.user_id) {
+                await AsyncStorage.setItem('token', data?.user_id);
+            }
+            const user = await getCurrentUser();
+            dispatch(setUser({
+                user_id: user?.user_id,
+                user_name: user?.user_name,
+                user_role: user?.user_role,
+                user_gender: user?.user_gender,
+                user_age: user?.user_age,
+                email: user?.email,
+                refetchToken: true,
+            }));
+        }
+        catch (err) {
+            setDisableMode(false);
+            if (err instanceof Error) {
+                const message = err?.message?.toLowerCase();
+                if (message?.includes('user not found')) {
+                    setError('email', { message: err?.message });
+                } else if (message?.includes('password incorrect')) {
+                    setError('password', { message: err?.message });
+                } else {
+                    Toast.show({
+                        ...toastStyle,
+                        type: ALERT_TYPE.DANGER,
+                        textBody: err?.message,
+                    });
+                }
+            }
+        }
+    };
+    const [disableMode, setDisableMode] = useState(false);
+    return (
+        <ScrollView >
+            <View style={style?.screen}>
+                <View style={style?.container}>
+                    <View style={style.imageContainer}>
+                        <Image source={logo} style={style?.image} />
+                    </View>
+                    <View style={style?.formContainer}>
+                        <View style={style?.headingContainer}>
+                            <Text style={style?.heading}>
+                                Let's Sign you in.
+                            </Text>
+                        </View>
+                        <CustomTextInput
+                            required
+                            editable={!disableMode}
+                            placeholder={'Enter email'}
+                            inputStyle={style?.textInput}
+                            label={'Email'}
+                            labelStyle={style?.label}
+                            keyboardType={'email-address'}
+                            control={control}
+                            name={'email'}
+                            value={watch('email')}
+                            errorMessage={errors?.email?.message}
+                        />
+                        <CustomTextInput
+                            required
+                            isSecureInput
+                            editable={!disableMode}
+                            placeholder={'Enter password'}
+                            inputStyle={style?.textInput}
+                            label={'Password'}
+                            labelStyle={style?.label}
+                            keyboardType={'default'}
+                            control={control}
+                            name={'password'}
+                            value={watch('password')}
+                            errorMessage={errors?.password?.message}
+                        />
+                        <CustomButton
+                            disableMode={disableMode}
+                            type={CustomButtonTypes?.OPASITYBUTTON}
+                            title={'Sign in'}
+                            buttonStyle={style?.button}
+                            textStyle={style?.buttonTextStyle}
+                            onPress={handleSubmit(onSubmit)}
+                        />
+                        <View style={style?.footer}>
+                            <Text style={style?.footerText}>
+                                Don't have an Account?
+                            </Text>
+                            <TouchableOpacity onPress={() => navigation?.navigate(screens?.Signup)} disabled={disableMode}>
+                                <Text style={style?.navigator}>
+                                    Register
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                </View>
+            </View>
+        </ScrollView>
+    );
+};
+
+export const style = StyleSheet.create({
+    screen: {
+        ...styles?.screen,
+        backgroundColor: colors?.WHITE,
+        height: '100%',
+        paddingHorizontal: 40,
+        paddingVertical: 80,
+    },
+    imageContainer: {
+        alignItems: 'center',
+    },
+    image: {
+        width: 250,
+        height: 250,
+    },
+    container: {
+        flex: 1,
+        paddingTop: 10,
+        gap: 40,
+    },
+    formContainer: {
+        gap: 20,
+    },
+    headingContainer: {
+        paddingVertical: 5,
+    },
+    heading: {
+        fontFamily: fonts?.MEDIUM,
+        color: PRIMARY_COLOR,
+        opacity: 0.8,
+        fontSize: fontSizes?.bigHeading,
+        textAlign: 'left',
+    },
+    inputContainer: {
+        gap: 10,
+    },
+    textInput: {
+        ...styles?.textInput,
+        paddingVertical: 12,
+        paddingHorizontal: 15,
+    },
+    label: {
+        ...styles?.label,
+        paddingStart: 10,
+        fontSize: fontSizes?.content,
+    },
+    button: {
+        borderRadius: 8,
+        paddingVertical: 8,
+        backgroundColor: PRIMARY_COLOR,
+    },
+    buttonTextStyle: {
+        ...styles?.buttonText,
+        color: colors?.WHITE,
+        fontWeight: 500,
+        fontSize: fontSizes?.heading,
+        textAlign: 'center',
+    },
+    footer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+    },
+    footerText: {
+        fontFamily: fonts?.REGULAR,
+        opacity: 0.6,
+    },
+    navigator: {
+        fontFamily: fonts?.REGULAR,
+        color: colors?.DARK_BLUE,
+        fontSize: fontSizes?.bigContent,
+    },
+});
