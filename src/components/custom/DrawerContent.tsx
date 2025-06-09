@@ -11,7 +11,7 @@ import { RootState } from 'src/Redux/store';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { styles } from 'src/Assets/Styles/global';
 import { Image } from 'react-native';
-import { NavigationProp } from '../Types/NavigationProp';
+import { NavigationProp } from '../Types/navigationProp';
 import { getUserImage } from 'src/Assets/Images';
 import  Icon  from 'react-native-vector-icons/MaterialIcons';
 import { fontSizes } from 'src/Assets/Styles/fontSizes';

@@ -6,7 +6,7 @@ import { styles } from 'src/Assets/Styles/global';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fonts } from 'src/Assets/Fonts';
 import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from 'src/Components/Types/NavigationProp';
+import { NavigationProp } from 'src/Components/Types/navigationProp';
 
 interface LoadPagesProps {
     limit: number;

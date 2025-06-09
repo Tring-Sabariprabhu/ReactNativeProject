@@ -4,13 +4,13 @@ import { fonts } from 'src/Assets/Fonts';
 import { getUserImage } from 'src/Assets/Images';
 import { styles } from 'src/Assets/Styles/global';
 import { RootState } from 'src/Redux/store';
-import { getTime } from 'src/Schema/MomentFunctions';
-import { getWorkdaysFormat } from 'src/Schema/Workdays';
+import { getTime } from 'src/Schema/momentFunctions';
+import { getWorkdaysFormat } from 'src/Schema/workdays';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
 import { colors, PRIMARY_COLOR } from 'src/Assets/Enums/colors';
 import { setBooking } from 'src/Redux/bookingSlice';
 import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../Types/NavigationProp';
+import { NavigationProp } from '../Types/navigationProp';
 import { screens } from 'src/Assets/Enums/screens';
 import { UserRole } from 'src/MockDatabase/Enums/users';
 

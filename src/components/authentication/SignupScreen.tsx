@@ -16,7 +16,7 @@ import { SelectInput } from '../Custom/SelectInput';
 import { useState } from 'react';
 import auth_logo from '../../Assets/Images/login_background.jpg';
 import { screens } from 'src/Assets/Enums/screens';
-import { NavigationProp } from '../Types/NavigationProp';
+import { NavigationProp } from '../Types/navigationProp';
 
 interface FormValues {
     email: string;

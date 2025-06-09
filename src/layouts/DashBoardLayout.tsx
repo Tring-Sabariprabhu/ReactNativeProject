@@ -13,7 +13,7 @@ import { privateRoutes } from 'src/Routes/privateRoutes';
 import { DrawerContent } from 'src/Components/Custom/DrawerContent';
 import { HomeScreen } from 'src/Components/Screens/HomeScreen';
 import { screens } from 'src/Assets/Enums/screens';
-import { ScreenProps } from 'src/Components/Types/ScreenProps';
+import { ScreenProps } from 'src/Components/Types/screenProps';
 import { style as drawerStyle } from 'src/Components/Custom/DrawerContent';
 interface DrawerIconProps {
     color: string

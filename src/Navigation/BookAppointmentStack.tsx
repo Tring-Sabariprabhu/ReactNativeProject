@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { colors } from 'src/Assets/Enums/colors';
-import { NavigationProp } from 'src/Components/Types/NavigationProp';
+import { NavigationProp } from 'src/Components/Types/navigationProp';
 import { setBooking } from 'src/Redux/bookingSlice';
 import { allRoutes } from 'src/Routes/allRoutes';
 

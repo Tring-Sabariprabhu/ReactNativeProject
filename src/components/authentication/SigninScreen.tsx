@@ -19,7 +19,7 @@ import { CustomTextInput } from '../Custom/CustomTextInput';
 import { CustomButton, CustomButtonTypes } from '../Custom/CustomButton/CustomButton';
 import { screens } from 'src/Assets/Enums/screens';
 import { fontSizes } from 'src/Assets/Styles/fontSizes';
-import { NavigationProp } from '../Types/NavigationProp';
+import { NavigationProp } from '../Types/navigationProp';
 
 interface FormValues {
     email: string;

@@ -7,7 +7,7 @@ import { UserGender, UserRole } from 'src/MockDatabase/Enums/users';
 import { PRIMARY_COLOR } from 'src/Assets/Enums/colors';
 import Icon from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
-import { NavigationProp } from '../Types/NavigationProp';
+import { NavigationProp } from '../Types/navigationProp';
 import { screens } from 'src/Assets/Enums/screens';
 import { getUserImage } from 'src/Assets/Images';
 

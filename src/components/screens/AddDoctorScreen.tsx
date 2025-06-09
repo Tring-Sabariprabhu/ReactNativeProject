@@ -24,8 +24,8 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import { ErrorMessage } from '../Custom/ErrorMessage';
 import { screens } from 'src/Assets/Enums/screens';
-import { NavigationProp } from '../Types/NavigationProp';
-import { getTime } from 'src/Schema/MomentFunctions';
+import { NavigationProp } from '../Types/navigationProp';
+import { getTime } from 'src/Schema/momentFunctions';
 
 
 interface WorkDays {

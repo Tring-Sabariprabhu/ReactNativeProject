@@ -1,7 +1,7 @@
 
 import { screens } from 'src/Assets/Enums/screens';
 import { SelectDoctor } from 'src/Components/Screens/BookAppointmentStack/SelectDoctor';
-import { ScreenProps } from 'src/Components/Types/ScreenProps';
+import { ScreenProps } from 'src/Components/Types/screenProps';
 import { UserRole } from 'src/MockDatabase/Enums/users';
 import { allRoutes } from './allRoutes';
 

@@ -8,10 +8,10 @@ import dermatology from 'src/Assets/Images/dermatology.png';
 import { DoctorSpecialists } from 'src/MockDatabase/Enums/doctors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { PRIMARY_COLOR } from 'src/Assets/Enums/colors';
-import { NavigationProp } from '../Types/NavigationProp';
+import { NavigationProp } from '../Types/navigationProp';
 import { screens } from 'src/Assets/Enums/screens';
-import { getTime } from 'src/Schema/MomentFunctions';
-import { getWorkdaysFormat } from 'src/Schema/Workdays';
+import { getTime } from 'src/Schema/momentFunctions';
+import { getWorkdaysFormat } from 'src/Schema/workdays';
 
 export const DoctorsScreen = () => {
     const navigation = useNavigation<NavigationProp>();
